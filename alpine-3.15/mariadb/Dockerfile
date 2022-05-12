@@ -25,7 +25,7 @@ RUN apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen && \
 RUN mkdir /docker-entrypoint-initdb.d && \
     mkdir /usr/local/bin/pre-exec.d && \
     mkdir /usr/local/bin/pre-init.d && \
-    chmod -R 755 /usr/local/bin/ \
+    chmod -R 755 /usr/local/bin/
 
 ADD startup.sh /usr/local/bin/startup.sh
 
