@@ -6,7 +6,7 @@ ARG VCS_REF
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
     php-version="8.2.5" \
-    alpine-version="3.17.0" \
+    alpine-version="3.17.3" \
     build="06-May-2023" \
     org.opencontainers.image.title="8.2-cli-alpine" \
     org.opencontainers.image.description="Customised PHP FPM image running on Alpine Linux" \
@@ -18,8 +18,9 @@ LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE 
 
-RUN apk --no-cache update; \
-    apk --no-cache upgrade; \
+RUN apk --no-cache update && \
+    apk --no-cache upgrade --available && \
+    sync && \
     apk add --no-cache --update --virtual .build-deps $PHPIZE_DEPS gcc g++ autoconf tar make; \
     apk add --update icu-libs icu-dev gettext-dev gmp-dev bzip2-dev libxml2-dev libffi-dev freetds-dev unixodbc-dev postgresql-dev libwebp-dev freetype-dev libpng-dev jpeg-dev libjpeg-turbo-dev libxpm-dev libxslt-dev tidyhtml-dev net-snmp-dev aspell-dev openldap-dev imap-dev imagemagick imagemagick-libs jpegoptim libintl  libavif-dev libzip-dev tidyhtml-dev bzip2 libffi-dev zlib-dev libssh2-dev liblzf-dev lz4-dev zlib-dev libmemcached-dev; \
     ## Fix wrong include path for ODBC
