@@ -10,15 +10,15 @@
 
 # Supported tags and respective `Dockerfile` links
 
--	[`8.1.1-cli-alpine3.15`, `8.1-cli-alpine3.15`, `8-cli-alpine3.15`, `cli-alpine3.15`, `8.1.1-alpine3.15`, `8.1-alpine3.15`, `8-alpine3.15`, `alpine3.15`, `8.1.1-cli-alpine`, `8.1-cli-alpine`, `8-cli-alpine`, `cli-alpine`, `8.1.1-alpine`, `8.1-alpine`, `8-alpine`, `alpine`](https://github.com/arruor/docker-php/blob/main/cli-alpine3.15/Dockerfile)
--	[`8.1.1-fpm-alpine3.15`, `8.1-fpm-alpine3.15`, `8-fpm-alpine3.15`, `fpm-alpine3.15`, `8.1.1-fpm-alpine`, `8.1-fpm-alpine`, `8-fpm-alpine`, `fpm-alpine`](https://github.com/arruor/docker-php/blob/main/fpm-alpine3.15/Dockerfile)
+-	[`php-cli:latest`, `php-cli:8.2.5`, `php-cli:8.2`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/cli/Dockerfile)
+-	[`php-fpm:latest`, `php-fpm:8.2.5`, `php-fpm:8.2`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/fpm/Dockerfile)
 
 # Quick reference (cont.)
 
 - **Where to file issues**:  
      Official PHP images: [https://github.com/docker-library/php/issues](https://github.com/docker-library/php/issues)
  
-     Customised images: [https://github.com/arruor/docker-php/issues](https://github.com/arruor/docker-php/issues)
+     Customised images: [https://github.com/arruor/docker-library/issues](https://github.com/arruor/docker-library/issues)
 
 - **Modifications to official image**: 
   - Extra extensions added: bcmath bz2 calendar dba exif ffi gd gettext gmp imap intl ldap mysqli odbc opcache pcntl pdo_dblib pdo_mysql pdo_odbc pdo_pgsql pgsql pspell shmop snmp soap sockets sysvmsg sysvsem sysvshm tidy xsl zip
@@ -35,8 +35,8 @@
 ### Create a `Dockerfile` in your PHP project
 
 ```dockerfile
-FROM arruor/php:8.1-cli-alpine
-COPY fpm-alpine3.15 /usr/src/myapp
+FROM arruor/php-cli:latest
+COPY <app dir> /usr/src/myapp
 WORKDIR /usr/src/myapp
 CMD [ "php", "./your-script.php" ]
 ```
@@ -53,7 +53,7 @@ $ docker run -it --rm --name my-running-app my-php-app
 For many simple, single file projects, you may find it inconvenient to write a complete `Dockerfile`. In such cases, you can run a PHP script by using the PHP Docker image directly:
 
 ```console
-$ docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp arruor/php:8.1-cli-alpine php your-script.php
+$ docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp arruor/php-cli:latest php your-script.php
 ```
 
 ## How to install more PHP extensions
@@ -65,7 +65,7 @@ We provide the helper scripts `docker-php-ext-configure`, `docker-php-ext-instal
 In order to keep the images smaller, PHP's source is kept in a compressed tar file. To facilitate linking of PHP's source with any extension, we also provide the helper script `docker-php-source` to easily extract the tar or delete the extracted source. Note: if you do use `docker-php-source` to extract the source, be sure to delete it in the same layer of the docker image.
 
 ```Dockerfile
-FROM arruor/php:8.1-cli-alpine
+FROM arruor/php-cli:latest
 RUN docker-php-source extract \
 	# do important things \
 	&& docker-php-source delete
@@ -76,7 +76,7 @@ RUN docker-php-source extract \
 For example, if you want to have a PHP-FPM image with the `gd` extension, you can inherit the base image that you like, and write your own `Dockerfile` like this:
 
 ```dockerfile
-FROM arruor/php:8.1-fpm-alpine
+FROM arruor/php-fpm:latest
 RUN apk --no-cache update && apk --no-cache upgrade && apk add --no-cache --update \
 		freetype-dev \
 		libjpeg-turbo-dev \
@@ -100,14 +100,14 @@ Some extensions are compiled by default. This depends on the PHP version you are
 Some extensions are not provided with the PHP source, but are instead available through [PECL](https://pecl.php.net/). To install a PECL extension, use `pecl install` to download and compile it, then use `docker-php-ext-enable` to enable it:
 
 ```dockerfile
-FROM arruor/php:8.1-cli-alpine
+FROM arruor/php-cli:latest
 RUN pecl install redis-5.1.1 \
 	&& pecl install xdebug-2.8.1 \
 	&& docker-php-ext-enable redis xdebug
 ```
 
 ```dockerfile
-FROM arruor/php:8.1-cli-alpine
+FROM arruor/php-cli:latest
 RUN apk --no-cache update && apk --no-cache upgrade && apk add --no-cache --update libmemcached-dev zlib-dev \
 	&& pecl install memcached-2.2.0 \
 	&& docker-php-ext-enable memcached
@@ -126,7 +126,7 @@ Unlike PHP core extensions, PECL extensions should be installed in series to fai
 Some extensions are not provided via either Core or PECL; these can be installed too, although the process is less automated:
 
 ```dockerfile
-FROM arruor/php:8.1-cli-alpine
+FROM arruor/php-cli:latest
 RUN curl -fsSL 'https://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz' -o xcache.tar.gz \
 	&& mkdir -p xcache \
 	&& tar -xf xcache.tar.gz -C xcache --strip-components=1 \
@@ -145,7 +145,7 @@ RUN curl -fsSL 'https://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.
 The `docker-php-ext-*` scripts *can* accept an arbitrary path, but it must be absolute (to disambiguate from built-in extension names), so the above example could also be written as the following:
 
 ```dockerfile
-FROM arruor/php:8.1-cli-alpine
+FROM arruor/php-cli:latest
 RUN curl -fsSL 'https://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz' -o xcache.tar.gz \
 	&& mkdir -p /tmp/xcache \
 	&& tar -xf xcache.tar.gz -C /tmp/xcache --strip-components=1 \
@@ -175,7 +175,7 @@ The default config can be customized by copying configuration files into the `$P
 ### Example
 
 ```dockerfile
-FROM arruor/php:8.1-cli-alpine
+FROM arruor/php-cli:latest
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -187,7 +187,7 @@ In many production environments, it is also recommended to (build and) enable th
 
 The `php` images come in many flavors, each designed for a specific use case.
 
-## `php:<version>-cli`
+## `php-cli:<version>`
 
 This variant contains the [PHP CLI](https://secure.php.net/manual/en/features.commandline.php) tool with default mods. If you need a web server, this is probably not the image you are looking for. It is designed to be used both as a throw away container (mount your source code and start the container to start your app), as well as a base from which to build other images.
 
@@ -195,7 +195,7 @@ It also is the only variant which contains the (not recommended) `php-cgi` binar
 
 Note that *all* variants of `php` contain the PHP CLI (`/usr/local/bin/php`).
 
-## `php:<version>-fpm`
+## `php-fpm:<version>`
 
 This variant contains PHP-FPM, which is a FastCGI implementation for PHP. See [the PHP-FPM website](https://php-fpm.org/) for more information about PHP-FPM.
 
@@ -210,14 +210,6 @@ Some potentially helpful resources:
 -	[Apache httpd Wiki example](https://wiki.apache.org/httpd/PHPFPMWordpress)
 
 **WARNING:** the FastCGI protocol is inherently trusting, and thus *extremely* insecure to expose outside a private container network -- unless you know *exactly* what you are doing (and are willing to accept the extreme risk), do not use Docker's `--publish` (`-p`) flag with this image variant.
-
-## `php:<version>-alpine`
-
-This image is based on the popular [Alpine Linux project](https://alpinelinux.org), available in [the `alpine` official image](https://hub.docker.com/_/alpine). Alpine Linux is much smaller than most distribution base images (~5MB), and thus leads to much slimmer images in general.
-
-This variant is useful when final image size being as small as possible is your primary concern. The main caveat to note is that it does use [musl libc](https://musl.libc.org) instead of [glibc and friends](https://www.etalabs.net/compare_libcs.html), so software will often run into issues depending on the depth of their libc requirements/assumptions. See [this Hacker News comment thread](https://news.ycombinator.com/item?id=10782897) for more discussion of the issues that might arise and some pro/con comparisons of using Alpine-based images.
-
-To minimize image size, it's uncommon for additional related tools (such as `git` or `bash`) to be included in Alpine-based images. Using this image as a base, add the things you need in your own Dockerfile (see the [`alpine` image description](https://hub.docker.com/_/alpine/) for examples of how to install packages if you are unfamiliar).
 
 # License
 
