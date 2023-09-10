@@ -10,8 +10,8 @@
 
 # Supported tags and respective `Dockerfile` links
 
--	[`php-cli:latest`, `php-cli:8.2.5`, `php-cli:8.2`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/cli/Dockerfile)
--	[`php-fpm:latest`, `php-fpm:8.2.5`, `php-fpm:8.2`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/fpm/Dockerfile)
+-	[`php-cli:latest`, `php-cli:8.2.10`, `php-cli:8.10`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/cli/Dockerfile)
+-	[`php-fpm:latest`, `php-fpm:8.2.10`, `php-fpm:8.10`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/fpm/Dockerfile)
 
 # Quick reference (cont.)
 
@@ -101,25 +101,25 @@ Some extensions are not provided with the PHP source, but are instead available 
 
 ```dockerfile
 FROM arruor/php-cli:latest
-RUN pecl install redis-5.1.1 \
-	&& pecl install xdebug-2.8.1 \
+RUN pecl install redis-5.3.7 \
+	&& pecl install xdebug-3.2.2 \
 	&& docker-php-ext-enable redis xdebug
 ```
 
 ```dockerfile
 FROM arruor/php-cli:latest
 RUN apk --no-cache update && apk --no-cache upgrade && apk add --no-cache --update libmemcached-dev zlib-dev \
-	&& pecl install memcached-2.2.0 \
+	&& pecl install memcached-3.2.0 \
 	&& docker-php-ext-enable memcached
 ```
 
 It is *strongly* recommended that users use an explicit version number in their `pecl install` invocations to ensure proper PHP version compatibility (PECL does not check the PHP version compatibility when choosing a version of the extension to install, but does when trying to install it).
 
-For example, `memcached-2.2.0` has no PHP version constraints (https://pecl.php.net/package/memcached/2.2.0), but `memcached-3.1.4` requires PHP 7.0.0 or newer (https://pecl.php.net/package/memcached/3.1.4). When doing `pecl install memcached` (no specific version) on PHP 5.6, PECL will try to install the latest release and fail.
+For example, `memcached-2.2.0` has no PHP version constraints (https://pecl.php.net/package/memcached/2.2.0), but `memcached-3.2.0` requires PHP 7.0.0 or newer (https://pecl.php.net/package/memcached/3.2.0). When doing `pecl install memcached` (no specific version) on PHP 5.6, PECL will try to install the latest release and fail.
 
 Beyond the compatibility issue, it's also a good practice to ensure you know when your dependencies receive updates and can control those updates directly.
 
-Unlike PHP core extensions, PECL extensions should be installed in series to fail properly if something went wrong. Otherwise, errors are just skipped by PECL. For example, `pecl install memcached-3.1.4 && pecl install redis-5.1.1` instead of `pecl install memcached-3.1.4 redis-5.1.1`. However, `docker-php-ext-enable memcached redis` is fine to be all in one command.
+Unlike PHP core extensions, PECL extensions should be installed in series to fail properly if something went wrong. Otherwise, errors are just skipped by PECL. For example, `pecl install memcached-3.2.0 && pecl install redis-5.3.7` instead of `pecl install memcached-3.2.0 redis-5.3.7`. However, `docker-php-ext-enable memcached redis` is fine to be all in one command.
 
 ### Other extensions
 
