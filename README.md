@@ -1,7 +1,7 @@
 # Quick reference
 
 - **Maintained by**:  
-     [Dimitar "Arruor" Nikov](https://github.com/arruor/docker-php)
+     [Dimitar "Arruor" Nikov](https://github.com/arruor/docker-library)
 
 - **Where to get help**:  
      [the Docker Community Forums](https://forums.docker.com/), [the Docker Community Slack](https://dockr.ly/slack), or [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=docker)
@@ -10,8 +10,8 @@
 
 # Supported tags and respective `Dockerfile` links
 
--	[`php-cli:latest`, `php-cli:8.2.10`, `php-cli:8.10`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/cli/Dockerfile)
--	[`php-fpm:latest`, `php-fpm:8.2.10`, `php-fpm:8.10`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine-3.17/php/fpm/Dockerfile)
+-	[`php-cli:latest`, `php-cli:8.2.10`, `php-cli:8.10`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/cli/Dockerfile)
+-	[`php-fpm:latest`, `php-fpm:8.2.10`, `php-fpm:8.10`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/fpm/Dockerfile)
 
 # Quick reference (cont.)
 
