@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-docker build -t arruor/php-cli:latest \
+docker build --no-cache -t arruor/php-cli:latest \
   -t arruor/php-cli:8.2.12 \
   -t arruor/php-cli:8.2 \
   -t arruor/php-cli:8 \

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-docker build -t arruor/php-fpm:latest \
+docker build --no-cache -t arruor/php-fpm:latest \
     -t arruor/php-fpm:8.2.12 \
     -t arruor/php-fpm:8.2 \
     -t arruor/php-fpm:8 \

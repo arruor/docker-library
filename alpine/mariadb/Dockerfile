@@ -18,7 +18,7 @@ LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
-RUN apk update && apk upgrade --available && sync && \
+RUN apk --no-cache update && apk --no-cache upgrade && sync && \
     apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen && \
     rm -f /var/cache/apk/*
 

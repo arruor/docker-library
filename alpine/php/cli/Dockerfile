@@ -19,7 +19,7 @@ LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.created=$BUILD_DATE 
 
 RUN apk --no-cache update && \
-    apk --no-cache upgrade --available && \
+    apk --no-cache upgrade && \
     sync && \
     apk add --no-cache --update --virtual .build-deps $PHPIZE_DEPS gcc g++ autoconf tar make; \
     apk add --update icu-libs icu-dev gettext-dev gmp-dev bzip2-dev libxml2-dev libffi-dev freetds-dev unixodbc-dev postgresql-dev libwebp-dev freetype-dev libpng-dev jpeg-dev libjpeg-turbo-dev libxpm-dev libxslt-dev tidyhtml-dev net-snmp-dev aspell-dev openldap-dev imap-dev imagemagick imagemagick-libs jpegoptim libintl  libavif-dev libzip-dev tidyhtml-dev bzip2 libffi-dev zlib-dev libssh2-dev liblzf-dev lz4-dev zlib-dev libmemcached-dev; \
@@ -85,6 +85,7 @@ RUN apk --no-cache update && \
     docker-php-ext-install /usr/src/php/ext/memcached; \
     ## Delete PHP source distribution
     docker-php-source delete; \
+    rm -f /usr/src/php.tar.xz*; \
     ## Delete PHP extensions' build dependencies
     apk del --purge icu-libs icu-dev gettext-dev gmp-dev bzip2-dev libxml2-dev libffi-dev freetds-dev unixodbc-dev postgresql-dev libwebp-dev freetype-dev libpng-dev jpeg-dev libjpeg-turbo-dev libxpm-dev libxslt-dev tidyhtml-dev net-snmp-dev aspell-dev openldap-dev imap-dev imagemagick imagemagick-libs jpegoptim libintl  libavif-dev libzip-dev tidyhtml-dev bzip2 libffi-dev zlib-dev libssh2-dev liblzf-dev lz4-dev zlib-dev libmemcached-dev; \
     ## Delete build tools
