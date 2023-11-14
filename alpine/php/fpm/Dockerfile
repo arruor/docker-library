@@ -5,14 +5,14 @@ ARG VCS_REF
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
-    php-version="8.2.10" \
-    alpine-version="3.18.3" \
-    build="10-Sep-2023" \
+    php-version="8.2.12" \
+    alpine-version="3.18.4" \
+    build="14-Nov-2023" \
     org.opencontainers.image.title="8.2-fpm-alpine" \
     org.opencontainers.image.description="Customised PHP FPM image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="v8.2.10" \
+    org.opencontainers.image.version="v8.2.12" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/php-fpm" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/php/fpm" \
     org.opencontainers.image.revision=$VCS_REF \

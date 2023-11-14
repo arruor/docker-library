@@ -1,4 +1,4 @@
-FROM alpine:3.18.3
+FROM alpine:3.18.4
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -6,8 +6,8 @@ ARG VCS_REF
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
     mariadb-version="10.11.5-r0" \
-    alpine-version="3.18.3" \
-    build="10-Sep-2023" \
+    alpine-version="3.18.4" \
+    build="14-Nov-2023" \
     org.opencontainers.image.title="mariadb-alpine" \
     org.opencontainers.image.description="MariaDB image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \

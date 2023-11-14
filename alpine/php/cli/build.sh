@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 docker build -t arruor/php-cli:latest \
-  -t arruor/php-cli:8.2.10 \
+  -t arruor/php-cli:8.2.12 \
   -t arruor/php-cli:8.2 \
   -t arruor/php-cli:8 \
   .
@@ -11,6 +11,6 @@ if [ ${?} -ne 0 ]; then
 fi
 
 docker push arruor/php-cli:latest
-docker push arruor/php-cli:8.2.10
+docker push arruor/php-cli:8.2.12
 docker push arruor/php-cli:8.2
 docker push arruor/php-cli:8

@@ -10,8 +10,8 @@
 
 # Supported tags and respective `Dockerfile` links
 
--	[`php-cli:latest`, `php-cli:8.2.10`, `php-cli:8.10`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/cli/Dockerfile)
--	[`php-fpm:latest`, `php-fpm:8.2.10`, `php-fpm:8.10`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/fpm/Dockerfile)
+-	[`php-cli:latest`, `php-cli:8.2.12`, `php-cli:8.2`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/cli/Dockerfile)
+-	[`php-fpm:latest`, `php-fpm:8.2.12`, `php-fpm:8.2`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/fpm/Dockerfile)
 
 # Quick reference (cont.)
 
