@@ -53,7 +53,7 @@ FLUSH PRIVILEGES ;
 EOF
 
 	if [ "$MYSQL_DATABASE" != "" ]; then
-	    echo "[i] Creating database: $MYSQL_DATABASE"
+	  echo "[i] Creating database: $MYSQL_DATABASE"
 		if [ "$MYSQL_CHARSET" != "" ] && [ "$MYSQL_COLLATION" != "" ]; then
 			echo "[i] with character set [$MYSQL_CHARSET] and collation [$MYSQL_COLLATION]"
 			echo "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE\` CHARACTER SET $MYSQL_CHARSET COLLATE $MYSQL_COLLATION;" >> $tfile
