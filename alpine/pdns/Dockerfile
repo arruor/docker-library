@@ -31,6 +31,7 @@ RUN mkdir -p /usr/local/share/pdns && \
 ADD startup.sh /usr/local/bin/startup.sh
 ADD schema.sqlite3.sql /usr/local/share/pdns
 ADD schema.mysql.sql /usr/local/share/pdns
+ADD pdns.sample.conf /usr/local/share/pdns
 
 EXPOSE 53/udp 53/tcp 8080/tcp
 
