@@ -1,10 +1,10 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 SQL_SCHEMA=/usr/local/share/pdns/schema.sqlite3.sql
 DB_TABLE=/var/lib/powerdns/pdns.sqlite
 PDNS_CONF=/usr/local/share/pdns/pdns.sample.conf
 
-if [ "$PDNS_EXTERNAL_DB" == "" ]; then
+if [ "${PDNS_EXTERNAL_DB}" == "" ]; then
   cp -fv ${PDNS_CONF} /etc/pdns/pdns.conf
   # Import SQLite3 DB Schema Structure
   if [[ ! -f ${DB_TABLE} ]]; then

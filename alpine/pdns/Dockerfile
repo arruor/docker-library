@@ -19,7 +19,7 @@ LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.created=$BUILD_DATE
 
 RUN apk --no-cache update && apk --no-cache upgrade && sync && \
-    apk add --no-cache sqlite pdns pdns-backend-sqlite3 pdns-backend-mariadb && \
+    apk add --no-cache sqlite pdns pdns-backend-sqlite3 pdns-backend-mysql bash && \
     rm -f /var/cache/apk/*
 
 RUN mkdir -p /usr/local/share/pdns && \
