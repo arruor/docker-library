@@ -1,25 +1,25 @@
-FROM alpine:3.18.5
+FROM arruor/alpine:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
-    mariadb-version="10.11.5-r0" \
-    alpine-version="3.18.4" \
-    build="14-Nov-2023" \
+    mariadb-version="10.11.5-r3" \
+    alpine-version="3.19.0" \
+    build="09-Dec-2023" \
     org.opencontainers.image.title="mariadb-alpine" \
     org.opencontainers.image.description="MariaDB image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="v10.11.5-r0" \
+    org.opencontainers.image.version="v10.11.5-r3" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/mariadb" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/mariadb" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
 RUN apk --no-cache update && apk --no-cache upgrade && sync && \
-    apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen bash && \
+    apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen && \
     rm -f /var/cache/apk/*
 
 
