@@ -1,14 +1,14 @@
-FROM alpine:edge
+FROM arruor/alpine:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
-    mariadb-version="4.8.3-r2" \
+    com.powerdns.pdns-recursor.version="4.8.3-r2" \
     alpine-version="edge" \
-    build="19-Nov-2023" \
-    org.opencontainers.image.title="pdns-alpine" \
+    build="10-Dec-2023" \
+    org.opencontainers.image.title="arruor/pdns" \
     org.opencontainers.image.description="PowerDNS image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
