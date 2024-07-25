@@ -5,14 +5,14 @@ ARG VCS_REF
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
-    mariadb-version="10.11.5-r3" \
-    alpine-version="3.19.0" \
-    build="09-Dec-2023" \
+    mariadb-version="10.11.8-r0" \
+    alpine-version="3.20.1" \
+    build="25-Jul-2023" \
     org.opencontainers.image.title="mariadb-alpine" \
     org.opencontainers.image.description="MariaDB image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="v10.11.5-r3" \
+    org.opencontainers.image.version="v10.11.8-r0" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/mariadb" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/mariadb" \
     org.opencontainers.image.revision=$VCS_REF \
