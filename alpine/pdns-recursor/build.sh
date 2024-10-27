@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
-docker build --no-cache -t arruor/pdns-recursor:latest -t arruor/pdns-recursor:5.0 -t arruor/pdns-recursor:5.0.5 .
+
+TAG_SHORT=5.0
+TAG_LONG=5.09
+
+set -euo pipefail
+
+docker build --no-cache -t arruor/pdns-recursor:latest -t arruor/pdns-recursor:${TAG_SHORT} -t arruor/pdns-recursor:${TAG_LONG} .
 
 if [ ${?} -ne 0 ]; then
   exit ${?}
 fi
 
 docker push arruor/pdns-recursor:latest
-docker push arruor/pdns-recursor:5.0.5
-docker push arruor/pdns-recursor:5.0
-docker push arruor/pdns-recursor:5
+docker push arruor/pdns-recursor:${TAG_LONG}
+docker push arruor/pdns-recursor:${TAG_SHORT}
