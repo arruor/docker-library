@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.20.1
+FROM docker.io/alpine:3.20.3
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -6,12 +6,12 @@ ARG VCS_REF
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
     alpine-version="3.20.1" \
-    build="21-Jul-2024" \
+    build="27-Oct-2024" \
     org.opencontainers.image.title="base-image-alpine" \
     org.opencontainers.image.description="Base Image for Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="3.20.1" \
+    org.opencontainers.image.version="3.20.3" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/alpine" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/alpine/base" \
     org.opencontainers.image.revision=$VCS_REF \
