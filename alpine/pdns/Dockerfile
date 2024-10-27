@@ -5,14 +5,14 @@ ARG VCS_REF
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
-    com.powerdns.version="4.9.1-r0" \
-    alpine-version="3.20.1" \
-    build="25-Jul-2024" \
+    com.powerdns.version="4.9.2-r0" \
+    alpine-version="3.20.3" \
+    build="27-Oct-2024" \
     org.opencontainers.image.title="arruor/pdns" \
     org.opencontainers.image.description="PowerDNS image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="4.9.1-r0" \
+    org.opencontainers.image.version="4.9.2-r0" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/pdns" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/alpine/pdns" \
     org.opencontainers.image.revision=$VCS_REF \
