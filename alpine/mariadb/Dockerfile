@@ -6,8 +6,8 @@ ARG VCS_REF
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     architecture="amd64/x86_64" \
     mariadb-version="10.11.8-r0" \
-    alpine-version="3.20.1" \
-    build="25-Jul-2023" \
+    alpine-version="3.20.3" \
+    build="27-Oct-2024" \
     org.opencontainers.image.title="mariadb-alpine" \
     org.opencontainers.image.description="MariaDB image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
