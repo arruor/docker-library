@@ -5,7 +5,7 @@ TAG_LONG=8.3.13
 
 set -euo pipefail
 
-docker build --no-cache -t arruor/php-cli:latest \
+docker build --no-cache -t arruor/php-fpm:latest \
   -t arruor/php-fpm:${TAG_LONG} \
   -t arruor/php-fpm:${TAG_SHORT} \
   -t arruor/php-fpm:8 \
