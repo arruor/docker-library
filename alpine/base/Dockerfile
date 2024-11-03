@@ -17,7 +17,7 @@ LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
-RUN apk --no-cache update && apk --no-cache upgrade && sync && \
+RUN wget https://alpine.nikov.net/mind-65cfafea.rsa.pub -O /etc/apk/keys/mind-65cfafea.rsa.pub && echo "https://alpine.nikov.net/v3.20/main" >> /etc/apk/repositories && apk --no-cache update && apk --no-cache upgrade && sync && \
     apk add --no-cache ca-certificates bash && \
     rm -f /var/cache/apk/*
 
