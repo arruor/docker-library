@@ -3,16 +3,16 @@ FROM arruor/alpine:latest
 ARG BUILD_DATE
 ARG VCS_REF
 
-LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
+LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     architecture="amd64/x86_64" \
-    mariadb-version="10.11.8-r0" \
-    alpine-version="3.20.3" \
-    build="27-Oct-2024" \
+    mariadb-version="11.4.4-r1" \
+    alpine-version=$VER \
+    build=$BUILD_DATE \
     org.opencontainers.image.title="mariadb-alpine" \
     org.opencontainers.image.description="MariaDB image running on Alpine Linux" \
-    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
+    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="v10.11.8-r0" \
+    org.opencontainers.image.version="v11.4.4-r1" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/mariadb" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/mariadb" \
     org.opencontainers.image.revision=$VCS_REF \
