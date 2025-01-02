@@ -2,17 +2,18 @@ FROM arruor/alpine:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
+ARG VER
 
-LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
+LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     architecture="amd64/x86_64" \
-    com.powerdns.pdns-recursor.version="5.0.9-r0" \
-    alpine-version="3.20.3" \
-    build="27-Oct-2024" \
+    com.powerdns.pdns-recursor.version="5.1.3-r0" \
+    alpine-version=$VER \
+    build=$BUILD_DATE \
     org.opencontainers.image.title="pdns-recursor-alpine" \
     org.opencontainers.image.description="PowerDNS Recursor image running on Alpine Linux" \
-    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.name>" \
+    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="5.0.9-r0" \
+    org.opencontainers.image.version="5.1.3-r0" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/pdns-recursor" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/alpine/pdns-recursor" \
     org.opencontainers.image.revision=$VCS_REF \
