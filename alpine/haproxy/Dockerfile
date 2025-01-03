@@ -7,6 +7,9 @@ ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
 ARG HAPROXY_USER=haproxy
 ARG HAPROXY_GROUP=haproxy
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VER
 
 ENV HAPROXY_VERSION ${HAPROXY_VERSION}
 ENV HAPROXY_URL ${HAPROXY_URL}
@@ -100,6 +103,13 @@ RUN set -eux; \
 # smoke test
 	haproxy -v
 
+RUN set -exo pipefail \
+    && apk add --no-cache \
+        rsyslog \
+    && mkdir -p /etc/rsyslog.d \
+    && touch /var/log/haproxy.log \
+    && ln -sf /dev/stdout /var/log/haproxy.log
+
 # https://www.haproxy.org/download/1.8/doc/management.txt
 # "4. Stopping and restarting HAProxy"
 # "when the SIGTERM signal is sent to the haproxy process, it immediately quits and all established connections are closed"
@@ -107,6 +117,7 @@ RUN set -eux; \
 STOPSIGNAL SIGUSR1
 
 COPY docker-entrypoint.sh /usr/local/bin/
+COPY rsyslog.conf /etc/rsyslog.d/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
