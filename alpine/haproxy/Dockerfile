@@ -118,7 +118,7 @@ STOPSIGNAL SIGUSR1
 
 COPY docker-entrypoint.sh /usr/local/bin/
 COPY rsyslog.conf /etc/rsyslog.conf
-COPY haprpoxy.conf /etc/rsyslog.d/
+COPY haproxy.conf /etc/rsyslog.d/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
