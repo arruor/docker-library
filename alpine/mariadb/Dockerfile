@@ -2,6 +2,7 @@ FROM arruor/alpine:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
+ARG VER
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     architecture="amd64/x86_64" \
