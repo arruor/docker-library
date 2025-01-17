@@ -5,6 +5,7 @@ BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git lo -1|awk '{print $2}')
 
 docker build --no-cache \
+  --platform linux/amd64,linux/arm64 \
   --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} \
   -t arruor/alpine:latest -t arruor/alpine:${TAG_SHORT} -t arruor/alpine:${TAG_LONG} .
 

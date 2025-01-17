@@ -9,6 +9,7 @@ VER="3.21.0"
 set -euo pipefail
 
 docker build --no-cache \
+ --platform linux/amd64,linux/arm64 \
  --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} --build-arg VER=${VER} \
  -t arruor/haproxy:latest -t arruor/haproxy:${TAG_SHORT} -t arruor/haproxy:${TAG_LONG} .
 
