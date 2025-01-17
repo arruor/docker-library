@@ -9,6 +9,7 @@ VER="3.21.0"
 set -euo pipefail
 
 docker build --no-cache \
+--platform linux/amd64,linux/arm64 \
 --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} --build-arg VER=${VER} \
  -t arruor/mariadb:latest -t arruor/mariadb:${TAG_SHORT} -t arruor/mariadb:${TAG_LONG} .
 
