@@ -25,7 +25,7 @@ RUN apk --no-cache update && \
     apk add --no-cache --update php84 php84-fpm php84-bcmath php84-bz2 php84-calendar php84-common \
     php84-ctype php84-curl php84-dba php84-dom php84-exif php84-ffi php84-fileinfo php84-ftp \
     php84-gd php84-gettext php84-gmp php84-iconv php84-intl php84-ldap php84-mbstring php84-mysqli \
-    php84-mysqlnd php84-odbc php84-openssl php84-pcntl php84-pdo php84-pdo_dblib php84-pdo_mysql \
+    php84-mysqlnd php84-odbc php84-openssl php84-opcache php84-pcntl php84-pdo php84-pdo_dblib php84-pdo_mysql \
     php84-pdo_odbc php84-pdo_sqlite php84-pear php84-phar php84-posix php84-session php84-shmop \
     php84-simplexml php84-soap php84-sockets php84-sodium php84-sqlite3 php84-sysvmsg php84-sysvsem \
     php84-sysvshm php84-tidy php84-tokenizer php84-xml php84-xmlreader php84-xmlwriter php84-xsl \
