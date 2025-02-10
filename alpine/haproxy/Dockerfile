@@ -1,8 +1,8 @@
 FROM arruor/alpine:latest
 
-ARG HAPROXY_VERSION=3.1.1
-ARG HAPROXY_URL=https://www.haproxy.org/download/3.1/src/haproxy-3.1.1.tar.gz
-ARG HAPROXY_SHA256=8c1b5d439ba4b278e602445c57e20067adef214dc9c44c2a1cf172fad5f7d273
+ARG HAPROXY_VERSION=3.1.3
+ARG HAPROXY_URL=https://www.haproxy.org/download/3.1/src/haproxy-3.1.3.tar.gz
+ARG HAPROXY_SHA256=6dd21f9a41f0ec7289650e299180b64f9dd225e35113fd1bddc6a3a2e79d5172
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
 ARG HAPROXY_USER=haproxy
