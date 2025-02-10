@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.21.0
+FROM docker.io/alpine:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
