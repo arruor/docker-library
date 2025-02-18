@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 TAG_SHORT=8.4
-TAG_LONG=8.4.2
+TAG_LONG=8.4.4
 
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git lo -1|awk '{print $2}')
-VER="3.21.0"
+VER="3.21.3"
 
 set -euo pipefail
 

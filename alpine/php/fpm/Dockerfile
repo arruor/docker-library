@@ -6,14 +6,14 @@ ARG VER
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     architecture="amd64/x86_64" \
-    php-version="8.4.2" \
+    php-version="8.4.4" \
     alpine-version=$VER \
     build=$BUILD_DATE \
     org.opencontainers.image.title="php-fpm-alpine" \
     org.opencontainers.image.description="Customised PHP FPM image running on Alpine Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="v8.4.2" \
+    org.opencontainers.image.version="v8.4.4" \
     org.opencontainers.image.url="https://hub.docker.com/r/arruor/php-fpm" \
     org.opencontainers.image.source="https://github.com/arruor/docker-library/php/fpm" \
     org.opencontainers.image.revision=$VCS_REF \
