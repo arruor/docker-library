@@ -3,7 +3,7 @@ FROM almalinux:latest
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
-ARG VCS_URL="https://github.com/arruor/docker-library/almalinux/base"
+ARG VCS_URL
 ARG VENDOR="20i Ltd"
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
@@ -18,22 +18,26 @@ LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.licenses="Apache 2.0"
 
-# Add the environment for traceability
 ENV BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF} \
-    VERSION=${VERSION}
-
-RUN dnf -y install 'dnf-command(config-manager)' && \
-    sed -i -e '/enabled/d' -e 's/^\[\(.*\)\]/[\1]\nenabled=0/' /etc/yum.repos.d/*.repo && \
-    dnf config-manager --add-repo http://yum.internal.20i.com/yum/al9-local.repo && \
-    dnf config-manager --add-repo http://yum.internal.20i.com/yum/al9-local-20i-docker.repo && \
-    dnf clean all && \
-    dnf -y update && \
-    dnf -y install curl vim mtr net-tools tcptraceroute procps tzdata --allowerasing && \
-    dnf clean all -v && \
-    ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime && \
-    echo "Europe/London" > /etc/timezone
+    VERSION=${VERSION} \
+    TZ=Europe/London
 
 COPY 20i-ca.crt /etc/pki/ca-trust/source/anchors/20i-ca.crt
 
-RUN update-ca-trust
+RUN --mount=type=cache,target=/var/cache/dnf \
+    dnf -y install dnf-plugins-core && \
+    # Disable all default repos
+    sed -i -e '/enabled/d' -e 's/^\[\(.*\)\]/[\1]\nenabled=0/' /etc/yum.repos.d/*.repo && \
+    # Add 20i internal repos
+    dnf config-manager --add-repo http://yum.internal.20i.com/yum/al9-local.repo && \
+    dnf config-manager --add-repo http://yum.internal.20i.com/yum/al9-local-20i-docker.repo && \
+    # Base tooling install
+    dnf -y --setopt=install_weak_deps=False install \
+        curl vim-minimal mtr net-tools tcptraceroute procps-ng tzdata ca-certificates \
+        --nodocs --allowerasing && \
+    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && echo "${TZ}" > /etc/timezone && \
+    # Trust internal CA
+    update-ca-trust && \
+    # Cleanup
+    dnf clean all && rm -rf /var/cache/dnf /tmp/* /var/tmp/*
