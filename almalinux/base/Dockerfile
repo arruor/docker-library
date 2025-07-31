@@ -29,7 +29,7 @@ RUN dnf -y install 'dnf-command(config-manager)' && \
     dnf config-manager --add-repo http://yum.internal.20i.com/yum/al9-local-20i-docker.repo && \
     dnf clean all && \
     dnf -y update && \
-    dnf -y install curl vim mtr net-tools tcptraceroute procps tzdata --alowerasing && \
+    dnf -y install curl vim mtr net-tools tcptraceroute procps tzdata --allowerasing && \
     dnf clean all -v && \
     ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime && \
     echo "Europe/London" > /etc/timezone
