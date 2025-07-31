@@ -15,7 +15,11 @@ LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
-RUN dnf clean all && \
+RUN dnf -y install 'dnf-command(config-manager)' && \
+    sed -i -e'/enabled/d' -e's/^\[\(.*\)\]/\[\1\]\nenabled=0/' /etc/yum.repos.d/*.repo && \
+    dnf config-manager --add-repo http://yum.internal.20i.com/yum/al9-local.repo && \
+    dnf config-manager --add-repo http://yum.internal.20i.com/yum/al9-local-20i-docker.repo && \
+    dnf clean all && \
     dnf -y update && \
     dnf -y install vim mtr net-tools tcptraceroute procps && \
     dnf clean all -v && \
