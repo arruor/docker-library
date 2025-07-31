@@ -3,6 +3,7 @@
 TAG_SHORT=4
 TAG_LONG=4.8
 BUILD_DATE=$(date "+%Y-%m-%d")
+TAG_BASE="hub.lhr.stackcp.net/20i/pdns"
 VCS_REF=$(git lo -1|awk '{print $2}')
 VERSION="4.8.4"
 
