@@ -23,7 +23,7 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF} \
     VERSION=${VERSION}
 
-RUN dnf install -y sqlite pdns pdns-backend-sqlite3 pdns-backend-mysql bash && \
+RUN dnf install -y sqlite pdns pdns-backend-sqlite pdns-backend-mysql bash && \
     dnf clean all
 
 ADD startup.sh /usr/local/bin/startup.sh
