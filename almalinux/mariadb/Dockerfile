@@ -1,26 +1,30 @@
-FROM hub.lhr.stackcp.net/20i/almalinux:latest
+FROM hub.lhr.stackcp.net/20i/alma:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG VER
+ARG VERSION
+ARG VCS_URL="https://github.com/arruor/docker-library/almalinux/mariadb"
+ARG VENDOR="20i Ltd"
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    architecture="amd64/x86_64" \
-    mariadb-version="$VER" \
-    build=$BUILD_DATE \
-    org.opencontainers.image.title="mariadb-alpine" \
-    org.opencontainers.image.description="MariaDB image running on Alma Linux 9" \
+    org.opencontainers.image.title="almalinux-mariadb" \
+    org.opencontainers.image.description="MariaDB image for Alma Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="$VER" \
-    org.opencontainers.image.url="https://hub.docker.com/r/arruor/mariadb" \
-    org.opencontainers.image.source="https://github.com/arruor/docker-library/mariadb" \
-    org.opencontainers.image.revision=$VCS_REF \
-    org.opencontainers.image.created=$BUILD_DATE
+    org.opencontainers.image.vendor="${VENDOR}" \
+    org.opencontainers.image.version="${VERSION}" \
+    org.opencontainers.image.url="${VCS_URL}" \
+    org.opencontainers.image.source="${VCS_URL}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.licenses="Apache 2.0"
 
-RUN apk --no-cache update && apk --no-cache upgrade && sync && \
-    apk add --no-cache MariaDB-client MariaDB MariaDB-server MariaDB-shared pwgen && \
-    rm -f /var/cache/apk/*
+# Add the environment for traceability
+ENV BUILD_DATE=${BUILD_DATE} \
+    VCS_REF=${VCS_REF} \
+    VERSION=${VERSION}
+
+RUN dnf install -y --enablerepo=mariadb1108 MariaDB-client MariaDB MariaDB-server MariaDB-shared pwgen && \
+    dnf clean all
 
 
 RUN mkdir /docker-entrypoint-initdb.d && \
