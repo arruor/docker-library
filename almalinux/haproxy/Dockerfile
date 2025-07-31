@@ -1,20 +1,27 @@
-FROM hub.lhr.stackcp.net/20i/almalinux:latest
+FROM hub.lhr.stackcp.net/20i/alma:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG VER
+ARG VERSION
+ARG VCS_URL="https://github.com/arruor/docker-library/almalinux/haproxy"
+ARG VENDOR="20i Ltd"
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    build=$BUILD_DATE \
-    org.opencontainers.image.title="haproxy-alpine" \
-    org.opencontainers.image.description="HAProxy Image for Alpine Linux" \
+    org.opencontainers.image.title="almalinux-haproxy" \
+    org.opencontainers.image.description="HAproxy image for Alma Linux" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="$VER" \
-    org.opencontainers.image.url="https://hub.lhr.stackcp.net/20i/almalinux/haproxy" \
-    org.opencontainers.image.source="https://github.com/arruor/docker-library/almalinux/haproxy" \
-    org.opencontainers.image.revision=$VCS_REF \
-    org.opencontainers.image.created=$BUILD_DATE
+    org.opencontainers.image.vendor="${VENDOR}" \
+    org.opencontainers.image.version="${VERSION}" \
+    org.opencontainers.image.url="${VCS_URL}" \
+    org.opencontainers.image.source="${VCS_URL}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.licenses="Apache 2.0"
+
+# Add the environment for traceability
+ENV BUILD_DATE=${BUILD_DATE} \
+    VCS_REF=${VCS_REF} \
+    VERSION=${VERSION}
 
 RUN set -exo pipefail \
     && dnf -y install haproxy32ti rsyslog rsyslog-logrotate \
