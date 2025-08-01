@@ -24,7 +24,8 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF} \
     VERSION=${VERSION}
 
-RUN dnf install -y pdns-recursor && \
+RUN dnf install --setopt=install_weak_deps=False --setopt=tsflags=nodocs -y pdns-recursor && \
+    mkdir -p /var/run/pdns-recursor && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
 
 COPY recursor.conf /etc/pdns/recursor.conf
