@@ -27,7 +27,7 @@ else
 
 	chown -R mysql:mysql /var/lib/mysql
 
-	mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
+	mariadb-install-db --user=mysql --ldata=/var/lib/mysql > /dev/null
 
 	if [ "${MARIADB_ROOT_PASSWORD}" = "" ]; then
 		MARIADB_ROOT_PASSWORD=$(pwgen 16 1)
@@ -93,14 +93,14 @@ EOF
   		echo
   	done
 
-	/usr/bin/mysqld --user=mysql --bootstrap --verbose=0 --skip-name-resolve --skip-networking=0 < "${tfile}"
+	/usr/sbin/mariadbd --user=mysql --bootstrap --verbose=0 --skip-name-resolve --skip-networking=0 < "${tfile}"
 	rm -f "${tfile}"
 
 	echo
 	echo 'MySQL init process done. Ready for start up.'
 	echo
 
-	echo "exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0" "${@}"
+	echo "exec /usr/sbin/mariadbd --user=mysql --console --skip-name-resolve --skip-networking=0" "${@}"
 fi
 
 # execute any pre-exec scripts
@@ -113,4 +113,4 @@ do
 	fi
 done
 
-exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0 "${@}"
+exec /usr/sbin/mariadbd --user=mysql --console --skip-name-resolve --skip-networking=0 "${@}"
