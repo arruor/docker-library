@@ -3,7 +3,7 @@
 set -euo pipefail
 
 VERSION="3.2.3"
-TAG_BASE="hub.lhr.stackcp.net/20i/haproxy"
+IMAGE_NAME="hub.lhr.stackcp.net/20i/haproxy"
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git rev-parse --short HEAD)
 VCS_URL="https://github.com/arruor/docker-library/almalinux/haproxy"
