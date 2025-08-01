@@ -24,8 +24,9 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF} \
     VERSION=${VERSION}
 
-RUN dnf install -y --enablerepo=mariadb1108 MariaDB-client MariaDB MariaDB-server MariaDB-shared pwgen && \
-    dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
+RUN dnf install -y --setopt=install_weak_deps=False --enablerepo=mariadb1108 \
+    MariaDB-client MariaDB MariaDB-server MariaDB-shared pwgen && \
+    dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* /usr/share/doc /usr/share/man /usr/share/info /usr/lib/locale/*
 
 
 RUN mkdir /docker-entrypoint-initdb.d && \
