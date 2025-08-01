@@ -3,12 +3,14 @@ FROM hub.lhr.stackcp.net/20i/alma:latest
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
-ARG VCS_URL="https://github.com/arruor/docker-library/almalinux/haproxy"
+ARG VCS_URL
 ARG VENDOR="20i Ltd"
+ARG TARGETARCH
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma" \
     org.opencontainers.image.title="almalinux-haproxy" \
-    org.opencontainers.image.description="HAproxy image for Alma Linux" \
+    org.opencontainers.image.description="HAProxy image for 20i" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.vendor="${VENDOR}" \
     org.opencontainers.image.version="${VERSION}" \
@@ -27,7 +29,7 @@ RUN set -exo pipefail \
     && dnf -y install haproxy32ti rsyslog rsyslog-logrotate \
     && dnf clean all \
     && touch /var/log/haproxy.log \
-    && ln -sf /dev/stdout /var/log/haproxy.log
+    && ln -sf /dev/stdout /var/log/haproxy.log && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
 
 # https://www.haproxy.org/download/1.8/doc/management.txt
 # "4. Stopping and restarting HAProxy"
