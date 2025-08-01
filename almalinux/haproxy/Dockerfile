@@ -5,7 +5,6 @@ ARG VCS_REF
 ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
-ARG TARGETARCH
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma" \
