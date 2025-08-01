@@ -3,12 +3,13 @@ FROM hub.lhr.stackcp.net/20i/alma:latest
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
-ARG VCS_URL="https://github.com/arruor/docker-library/almalinux/pdns-recursor"
+ARG VCS_URL
 ARG VENDOR="20i Ltd"
 
 LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma" \
     org.opencontainers.image.title="almalinux-pdns-recursor" \
-    org.opencontainers.image.description="PowerDNS Recursor image for Alma Linux" \
+    org.opencontainers.image.description="PowerDNS Recursor image for 20i" \
     org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.vendor="${VENDOR}" \
     org.opencontainers.image.version="${VERSION}" \
@@ -24,7 +25,7 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VERSION=${VERSION}
 
 RUN dnf install -y pdns-recursor && \
-    dnf clean all
+    dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
 
 COPY recursor.conf /etc/pdns/recursor.conf
 
