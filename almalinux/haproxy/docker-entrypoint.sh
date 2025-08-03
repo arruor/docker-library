@@ -1,23 +1,24 @@
 #!/bin/bash
-
 set -euo pipefail
-set -o errexit
-set -o nounset
 
 rm -f /var/run/rsyslogd.pid
-rsyslogd -n
+rsyslogd
 
-# first arg is `-f` or `--some-option`
-if [ "${1#-}" != "$1" ]; then
-	set -- haproxy "$@"
+# If no arguments are passed, default to haproxy
+if [ "$#" -eq 0 ]; then
+    exec haproxy -db -f /etc/haproxy/haproxy.cfg
 fi
 
-if [ "$1" = 'haproxy' ]; then
-	shift # "haproxy"
-	# if the user wants "haproxy", let's add a couple useful flags
-	#   -W  -- "master-worker mode" (similar to the old "haproxy-systemd-wrapper"; allows for reload via "SIGUSR2")
-	#   -db -- disables background mode
-	set -- haproxy -W -db "$@"
+# If first argument starts with '-', assume haproxy args
+if [[ "${1:-}" == -* ]]; then
+    exec haproxy -db "$@"
 fi
 
+# If first argument is 'haproxy', run it with useful defaults
+if [[ "${1:-}" == "haproxy" ]]; then
+    shift
+    exec haproxy -db "$@"
+fi
+
+# Otherwise, run user command
 exec "$@"
