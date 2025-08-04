@@ -52,4 +52,4 @@ HEALTHCHECK --interval=30s --timeout=3s CMD curl -fsS http://localhost:9001/ping
 
 USER www-data
 
-CMD ["usr/sbin/php-fpm", "-F", "--fpm-config", "etc/php-fpm.conf"]
+CMD ["/usr/sbin/php-fpm", "-F", "--fpm-config", "/etc/php-fpm.conf"]
