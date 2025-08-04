@@ -45,5 +45,11 @@ RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install php 
     touch /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log && \
     chown $DEFAULT_USER:$DEFAULT_GROUP /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log /run/php-fpm
 
-ADD www.ini /etc/php.d/99-www.ini
-ADD www.pool.conf /etc/php-fpm.d/www.conf
+COPY www.ini /etc/php.d/99-www.ini
+COPY www.pool.conf /etc/php-fpm.d/www.conf
+
+HEALTHCHECK --interval=30s --timeout=3s CMD curl -fsS http://localhost:9001/ping || exit 1
+
+USER www-data
+
+CMD ["usr/sbin/php-fpm", "-F", "--fpm-config", "etc/php-fpm.conf"]
