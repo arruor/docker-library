@@ -28,28 +28,29 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF} \
     VERSION=${VERSION}
 
-RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install php php-fpm php-bcmath php-common php-dba \
-    php-gd php-gmp php-intl php-ldap php-mbstring php-mysqlnd php-odbc php-process php-pdo php-pdo_dblib \
-    php-pear php-soap php-sodium php-tidy php-xml php-pecl-zip php-pecl-event \
-    php-pecl-igbinary php-pecl-imagick php-pecl-mailparse php-pecl-msgpack php-pecl-redis5 \
-    php-pecl-ssh2 php-pecl-xdebug3 php-pecl-yaml php-zstd \
-    curl bash mysql-client && \
+RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
+    php80ti php80ti-bcmath php80ti-cli php80ti-common php80ti-dba php80ti-fpm php80ti-gd php80ti-gmp php80ti-imap php80ti-intl \
+    php80ti-ldap php80ti-mbstring php80ti-mysqlnd php80ti-odbc php80ti-opcache php80ti-openssl php80ti-pdo \
+    php80ti-pdo-dblib php80ti-process php80ti-soap php80ti-sodium php80ti-tidy php80ti-xml php80ti-zip php80ti-ssh2 \
+    php80ti-igbinary php80ti-msgpack php80ti-redis php80ti-xdebug curl bash MariaDB-client && \
     curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && \
     chmod +x /usr/bin/composer && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* && \
     rm -f /etc/php-fpm.d/www.conf && \
     groupadd -g $DEFAULT_GID -r $DEFAULT_GROUP && \
-    adduser -r -g $DEFAULT_GROUP -u $DEFAULT_UID $DEFAULT_USER && \
+    adduser -r -g $DEFAULT_GROUP -u $DEFAULT_UID -d /home/www-data -m $DEFAULT_USER && \
     mkdir -p /var/lib/php/{session,opcache,wsdlcache} /var/log/php-fpm /run/php-fpm && \
     chown -R $DEFAULT_USER:$DEFAULT_GROUP /var/lib/php /var/log/php-fpm && \
     touch /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log && \
-    chown $DEFAULT_USER:$DEFAULT_GROUP /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log /run/php-fpm
+    chown $DEFAULT_USER:$DEFAULT_GROUP /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log /run/php-fpm && \
+    ln -s /usr/php80/usr/bin/php /bin/php
 
-COPY www.ini /etc/php.d/99-www.ini
-COPY www.pool.conf /etc/php-fpm.d/www.conf
+COPY www.ini /usr/php80/etc/php.d/99-www.ini
+COPY www.pool.conf /usr/php80/etc/php-fpm.d/www.conf
+COPY php-fpm.conf /usr/php80/etc/php-fpm.conf
 
 HEALTHCHECK --interval=30s --timeout=3s CMD curl -fsS http://localhost:9001/ping || exit 1
 
 USER www-data
 
-CMD ["/usr/sbin/php-fpm", "-F", "--fpm-config", "/etc/php-fpm.conf"]
+CMD ["/usr/php80/usr/sbin/php-fpm", "-F", "--fpm-config", "/usr/php80/etc/php-fpm.conf"]

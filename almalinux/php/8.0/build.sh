@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-VERSION="8.0.30"
+VERSION="8.0.30-3"
 IMAGE_NAME="hub.lhr.stackcp.net/20i/php-8.0"
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git rev-parse --short HEAD)

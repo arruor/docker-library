@@ -38,11 +38,12 @@ RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* && \
     rm -f /etc/php-fpm.d/www.conf && \
     groupadd -g $DEFAULT_GID -r $DEFAULT_GROUP && \
-    adduser -r -g $DEFAULT_GROUP -u $DEFAULT_UID $DEFAULT_USER && \
+    adduser -r -g $DEFAULT_GROUP -u $DEFAULT_UID -d /home/www-data -m $DEFAULT_USER && \
     mkdir -p /var/lib/php/{session,opcache,wsdlcache} /var/log/php-fpm /run/php-fpm && \
     chown -R $DEFAULT_USER:$DEFAULT_GROUP /var/lib/php /var/log/php-fpm && \
     touch /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log && \
-    chown $DEFAULT_USER:$DEFAULT_GROUP /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log /run/php-fpm
+    chown $DEFAULT_USER:$DEFAULT_GROUP /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log /run/php-fpm && \
+    ln -s /usr/php83/usr/bin/php /bin/php
 
 COPY www.ini /usr/php83/etc/php.d/99-www.ini
 COPY www.pool.conf /usr/php83/etc/php-fpm.d/www.conf
