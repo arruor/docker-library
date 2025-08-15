@@ -32,7 +32,7 @@ RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
     php80ti php80ti-bcmath php80ti-cli php80ti-common php80ti-dba php80ti-fpm php80ti-gd php80ti-gmp php80ti-imap php80ti-intl \
     php80ti-ldap php80ti-mbstring php80ti-mysqlnd php80ti-odbc php80ti-opcache php80ti-openssl php80ti-pdo \
     php80ti-pdo-dblib php80ti-process php80ti-soap php80ti-sodium php80ti-tidy php80ti-xml php80ti-zip php80ti-ssh2 \
-    php80ti-igbinary php80ti-msgpack php80ti-redis php80ti-xdebug curl bash MariaDB-client && \
+    php80ti-igbinary php80ti-msgpack php80ti-redis php80ti-xdebug curl bash MariaDB-client unzip tar && \
     curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && \
     chmod +x /usr/bin/composer && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* && \
