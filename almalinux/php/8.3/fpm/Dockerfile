@@ -32,7 +32,7 @@ RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
     php83ti php83ti-bcmath php83ti-cli php83ti-common php83ti-dba php83ti-fpm php83ti-gd php83ti-gmp php83ti-imap php83ti-intl \
     php83ti-ldap php83ti-mbstring php83ti-mysqlnd php83ti-odbc php83ti-opcache php83ti-openssl php83ti-pdo \
     php83ti-pdo-dblib php83ti-process php83ti-soap php83ti-sodium php83ti-tidy php83ti-xml php83ti-zip php83ti-ssh2 \
-    php83ti-igbinary php83ti-msgpack php83ti-redis php83ti-xdebug curl bash MariaDB-client unzip tar && \
+    php83ti-igbinary php83ti-msgpack php83ti-redis php83ti-xdebug curl bash MariaDB-client unzip tar fcgi && \
     curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && \
     chmod +x /usr/bin/composer && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* && \
@@ -49,7 +49,7 @@ COPY www.ini /usr/php83/etc/php.d/99-www.ini
 COPY www.pool.conf /usr/php83/etc/php-fpm.d/www.conf
 COPY php-fpm.conf /usr/php83/etc/php-fpm.conf
 
-HEALTHCHECK --interval=30s --timeout=3s CMD curl -fsS http://localhost:9001/ping || exit 1
+HEALTHCHECK --interval=30s --timeout=3s CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET /bin/cgi-fcgi -bind -connect 127.0.0.1:9001 || exit 1
 
 USER www-data
 

@@ -32,7 +32,7 @@ RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
     php80ti php80ti-bcmath php80ti-cli php80ti-common php80ti-dba php80ti-fpm php80ti-gd php80ti-gmp php80ti-imap php80ti-intl \
     php80ti-ldap php80ti-mbstring php80ti-mysqlnd php80ti-odbc php80ti-opcache php80ti-openssl php80ti-pdo \
     php80ti-pdo-dblib php80ti-process php80ti-soap php80ti-sodium php80ti-tidy php80ti-xml php80ti-zip php80ti-ssh2 \
-    php80ti-igbinary php80ti-msgpack php80ti-redis php80ti-xdebug curl bash MariaDB-client unzip tar && \
+    php80ti-igbinary php80ti-msgpack php80ti-redis php80ti-xdebug curl bash MariaDB-client unzip tar fcgi && \
     curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && \
     chmod +x /usr/bin/composer && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* && \
@@ -49,7 +49,7 @@ COPY www.ini /usr/php80/etc/php.d/99-www.ini
 COPY www.pool.conf /usr/php80/etc/php-fpm.d/www.conf
 COPY php-fpm.conf /usr/php80/etc/php-fpm.conf
 
-HEALTHCHECK --interval=30s --timeout=3s CMD curl -fsS http://localhost:9001/ping || exit 1
+HEALTHCHECK --interval=30s --timeout=3s CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET /bin/cgi-fcgi -bind -connect 127.0.0.1:9001 || exit 1
 
 USER www-data
 
