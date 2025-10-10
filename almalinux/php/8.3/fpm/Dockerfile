@@ -33,6 +33,7 @@ RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
     php83ti-ldap php83ti-mbstring php83ti-mysqlnd php83ti-odbc php83ti-opcache php83ti-openssl php83ti-pdo \
     php83ti-pdo-dblib php83ti-process php83ti-soap php83ti-sodium php83ti-tidy php83ti-xml php83ti-zip php83ti-ssh2 \
     php83ti-igbinary php83ti-msgpack php83ti-redis php83ti-xdebug curl bash MariaDB-client unzip tar fcgi git patch gettext && \
+    dnf -y module install nodejs:22 && \
     curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && \
     chmod +x /usr/bin/composer && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* && \
