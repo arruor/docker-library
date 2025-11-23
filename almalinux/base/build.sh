@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-VERSION="1.0.1"
+VERSION="9.7"
 IMAGE_NAME="hub.lhr.stackcp.net/20i/alma"
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git rev-parse --short HEAD)
