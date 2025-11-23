@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-VERSION="3.2.3"
+VERSION="3.2.9"
 IMAGE_NAME="hub.lhr.stackcp.net/20i/haproxy"
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git rev-parse --short HEAD)
