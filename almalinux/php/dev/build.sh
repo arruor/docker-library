@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-IMAGE_NAME="hub.lhr.stackcp.net/20i/php-8.3-cli"
+IMAGE_NAME="hub.lhr.stackcp.net/20i/php-dev"
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git rev-parse --short HEAD)
-VCS_URL="https://github.com/arruor/docker-library/almalinux/php-8.3/cli"
+VCS_URL="https://github.com/arruor/docker-library/almalinux/php/dev"
 VERSION="8.3.28-${VCS_REF}"
 
 docker buildx build \
