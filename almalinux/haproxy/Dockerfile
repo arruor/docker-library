@@ -25,7 +25,7 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VERSION=${VERSION}
 
 RUN set -exo pipefail \
-    && dnf install -y --setopt=install_weak_deps=False haproxy32ti rsyslog rsyslog-logrotate \
+    && dnf install -y --setopt=install_weak_deps=False haproxy33ti rsyslog rsyslog-logrotate \
     && dnf clean all \
     && touch /var/log/haproxy.log \
     && ln -sf /dev/stdout /var/log/haproxy.log && ln -sf /dev/stderr /var/log/haproxy-error.log && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
