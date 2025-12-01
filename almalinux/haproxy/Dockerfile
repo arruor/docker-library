@@ -28,7 +28,7 @@ RUN set -exo pipefail \
     && dnf install -y --setopt=install_weak_deps=False haproxy32ti rsyslog rsyslog-logrotate \
     && dnf clean all \
     && touch /var/log/haproxy.log \
-    && ln -sf /dev/stdout /var/log/haproxy.log && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
+    && ln -sf /dev/stdout /var/log/haproxy.log && ln -sf /dev/stderr /var/log/haproxy-error.log && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
 
 # https://www.haproxy.org/download/1.8/doc/management.txt
 # "4. Stopping and restarting HAProxy"
