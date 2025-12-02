@@ -29,8 +29,13 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VERSION=${VERSION}
 
 RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
-    curl bash MariaDB-client unzip tar git patch gettext && \
+    curl bash MariaDB-client unzip tar git patch gettext sudo && \
     dnf -y module install nodejs:22 && \
     curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && \
     chmod +x /usr/bin/composer && \
+    usermod -aG wheel www-data && \
+    echo "%wheel ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/wheel && \
+    chmod 0440 /etc/sudoers.d/wheel && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
