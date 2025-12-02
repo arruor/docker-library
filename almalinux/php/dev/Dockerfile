@@ -38,4 +38,6 @@ RUN dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
     chmod 0440 /etc/sudoers.d/wheel && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
 
+USER www-data
+
 ENTRYPOINT ["tail", "-f", "/dev/null"]
