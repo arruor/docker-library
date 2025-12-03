@@ -1,4 +1,4 @@
-FROM almalinux:latest
+FROM almalinux:9
 
 ARG BUILD_DATE
 ARG VCS_REF
