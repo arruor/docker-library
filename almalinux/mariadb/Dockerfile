@@ -6,11 +6,11 @@ ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
 
-LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
+LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma" \
     org.opencontainers.image.title="almalinux-mariadb" \
     org.opencontainers.image.description="MariaDB image for 20i" \
-    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.vendor="${VENDOR}" \
     org.opencontainers.image.version="${VERSION}" \
     org.opencontainers.image.url="${VCS_URL}" \
@@ -24,7 +24,7 @@ ENV BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF} \
     VERSION=${VERSION}
 
-RUN dnf install -y --setopt=install_weak_deps=False --enablerepo=mariadb1108 \
+RUN dnf install -y --setopt=install_weak_deps=False --enablerepo=mariadb123 \
     MariaDB-client MariaDB MariaDB-server MariaDB-shared pwgen && \
     dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/* /usr/share/doc /usr/share/man /usr/share/info /usr/lib/locale/*
 

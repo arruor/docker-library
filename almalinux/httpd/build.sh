@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-VERSION="2.4.65"
+VERSION="2.4.66"
 IMAGE_NAME="hub.lhr.stackcp.net/20i/httpd"
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git rev-parse --short HEAD)

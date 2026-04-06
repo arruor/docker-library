@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-VERSION="11.8.5"
+VERSION="12.3.1"
 IMAGE_NAME="hub.lhr.stackcp.net/20i/mariadb"
 BUILD_DATE=$(date "+%Y-%m-%d")
 VCS_REF=$(git rev-parse --short HEAD)
