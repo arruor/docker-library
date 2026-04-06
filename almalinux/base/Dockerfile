@@ -8,7 +8,7 @@ ARG VENDOR="20i Ltd"
 ARG TARGETARCH
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="docker.io/library/almalinux:latest" \
+    org.opencontainers.image.base.name="docker.io/library/almalinux:9" \
     org.opencontainers.image.title="almalinux-base" \
     org.opencontainers.image.description="Base Image for AlmaLinux with 20i tooling and CA certificates" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
@@ -18,29 +18,23 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.source="${VCS_URL}" \
     org.opencontainers.image.revision="${VCS_REF}" \
     org.opencontainers.image.created="${BUILD_DATE}" \
-    org.opencontainers.image.licenses="Apache 2.0"
+    org.opencontainers.image.licenses="Apache-2.0"
 
-ENV BUILD_DATE=${BUILD_DATE} \
-    VCS_REF=${VCS_REF} \
-    VERSION=${VERSION} \
-    TZ=Europe/London
+ENV TZ=Europe/London
 
 COPY 20i-ca.crt /etc/pki/ca-trust/source/anchors/20i-ca.crt
 
-RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH} \
-    dnf -y install dnf-plugins-core python3-dnf-plugins-core python3-dbus python3-systemd && \
-    dnf clean all && \
-    # Disable all default repos \
-    sed -i -e '/enabled/d' -e 's/^\[\(.*\)\]/[\1]\nenabled=0/' /etc/yum.repos.d/*.repo && \
-    # Add 20i internal repos \
-    dnf config-manager --add-repo http://yum.lhr.stackcp.net/yum/al9-local.repo && \
-    dnf config-manager --add-repo http://yum.lhr.stackcp.net/yum/al9-local-20i-docker.repo && \
-    # Base tooling install \
+RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
+    set -eux; \
+    dnf -y install dnf-plugins-core python3-dnf-plugins-core python3-dbus python3-systemd; \
+    sed -i -e '/enabled/d' -e 's/^\[\(.*\)\]/[\1]\nenabled=0/' /etc/yum.repos.d/*.repo; \
+    dnf config-manager --add-repo http://yum.lhr.stackcp.net/yum/al9-local.repo; \
+    dnf config-manager --add-repo http://yum.lhr.stackcp.net/yum/al9-local-20i-docker.repo; \
     dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
-        curl vim-minimal mtr net-tools tcptraceroute procps-ng tzdata ca-certificates \
-        --nodocs --allowerasing && \
-    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && echo "${TZ}" > /etc/timezone && \
-    # Trust internal CA \
-    update-ca-trust && \
-    # Cleanup \
-    dnf clean all && rm -rf /tmp/* /var/tmp/*
+        ca-certificates curl mtr net-tools procps-ng python3-dbus python3-systemd \
+        tcptraceroute tzdata vim-minimal; \
+    ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime; \
+    echo "${TZ}" > /etc/timezone; \
+    update-ca-trust; \
+    dnf clean all; \
+    rm -rf /var/cache/dnf /tmp/* /var/tmp/*

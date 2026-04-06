@@ -5,9 +5,10 @@ ARG VCS_REF
 ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
+ARG TARGETARCH
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma" \
+    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma:latest" \
     org.opencontainers.image.title="almalinux-pdns" \
     org.opencontainers.image.description="PowerDNS image for 20i" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
@@ -17,17 +18,18 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.source="${VCS_URL}" \
     org.opencontainers.image.revision="${VCS_REF}" \
     org.opencontainers.image.created="${BUILD_DATE}" \
-    org.opencontainers.image.licenses="Apache 2.0"
+    org.opencontainers.image.licenses="Apache-2.0"
 
-# Add the environment for traceability
-ENV BUILD_DATE=${BUILD_DATE} \
-    VCS_REF=${VCS_REF} \
-    VERSION=${VERSION}
+RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
+    set -eux; \
+    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
+        bash pdns pdns-backend-mysql pdns-backend-sqlite sqlite; \
+    dnf clean all; \
+    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
 
-RUN dnf install -y sqlite pdns pdns-backend-sqlite pdns-backend-mysql bash && \
-    dnf clean all && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
+COPY startup.sh /usr/local/bin/startup.sh
 
-ADD startup.sh /usr/local/bin/startup.sh
+RUN chmod 0755 /usr/local/bin/startup.sh
 
 EXPOSE 53/udp 53/tcp 8080/tcp
 

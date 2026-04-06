@@ -5,9 +5,10 @@ ARG VCS_REF
 ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
+ARG TARGETARCH
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma" \
+    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma:latest" \
     org.opencontainers.image.title="almalinux-httpd" \
     org.opencontainers.image.description="Apache httpd image for 20i" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
@@ -17,20 +18,16 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.source="${VCS_URL}" \
     org.opencontainers.image.revision="${VCS_REF}" \
     org.opencontainers.image.created="${BUILD_DATE}" \
-    org.opencontainers.image.licenses="Apache 2.0"
+    org.opencontainers.image.licenses="Apache-2.0"
 
-# Add the environment for traceability
-ENV BUILD_DATE=${BUILD_DATE} \
-    VCS_REF=${VCS_REF} \
-    VERSION=${VERSION}
+RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
+    set -eux; \
+    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs httpd httpd-tools; \
+    ln -snf /dev/stdout /var/log/httpd/access_log; \
+    ln -snf /dev/stderr /var/log/httpd/error_log; \
+    dnf clean all; \
+    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
 
-RUN set -exo pipefail \
-    && dnf install -y --setopt=install_weak_deps=False httpd httpd-tools \
-    && dnf clean all \
-    && ln -sf /dev/stdout /var/log/httpd/access_log \
-    && ln -sf /dev/stderr /var/log/httpd/error_log \
-    && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
-
-COPY 000-proxy.conf /etc/httpd/conf.d/
+COPY 000-proxy.conf /etc/httpd/conf.d/000-proxy.conf
 
 CMD ["/usr/sbin/httpd", "-DFOREGROUND"]

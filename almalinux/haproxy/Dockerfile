@@ -5,9 +5,10 @@ ARG VCS_REF
 ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
+ARG TARGETARCH
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma" \
+    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma:latest" \
     org.opencontainers.image.title="almalinux-haproxy" \
     org.opencontainers.image.description="HAProxy image for 20i" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
@@ -17,18 +18,16 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
     org.opencontainers.image.source="${VCS_URL}" \
     org.opencontainers.image.revision="${VCS_REF}" \
     org.opencontainers.image.created="${BUILD_DATE}" \
-    org.opencontainers.image.licenses="Apache 2.0"
+    org.opencontainers.image.licenses="Apache-2.0"
 
-# Add the environment for traceability
-ENV BUILD_DATE=${BUILD_DATE} \
-    VCS_REF=${VCS_REF} \
-    VERSION=${VERSION}
-
-RUN set -exo pipefail \
-    && dnf install -y --setopt=install_weak_deps=False haproxy33ti rsyslog rsyslog-logrotate \
-    && dnf clean all \
-    && touch /var/log/haproxy.log \
-    && ln -sf /dev/stdout /var/log/haproxy.log && ln -sf /dev/stderr /var/log/haproxy-error.log && rm -rf /tmp/* /var/tmp/* /var/cache/dnf/*
+RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
+    set -eux; \
+    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs haproxy33ti rsyslog rsyslog-logrotate; \
+    touch /var/log/haproxy.log /var/log/haproxy-error.log; \
+    ln -snf /dev/stdout /var/log/haproxy.log; \
+    ln -snf /dev/stderr /var/log/haproxy-error.log; \
+    dnf clean all; \
+    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
 
 # https://www.haproxy.org/download/1.8/doc/management.txt
 # "4. Stopping and restarting HAProxy"
@@ -36,6 +35,9 @@ RUN set -exo pipefail \
 # "graceful stop is triggered when the SIGUSR1 signal is sent to the haproxy process"
 STOPSIGNAL SIGUSR1
 
-COPY docker-entrypoint.sh /usr/local/bin/
-COPY haproxy.conf /etc/rsyslog.d/
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY haproxy.conf /etc/rsyslog.d/haproxy.conf
+
+RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
