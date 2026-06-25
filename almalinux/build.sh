@@ -113,16 +113,16 @@ declare -A IMAGE_NAME=(
 )
 
 declare -A VERSION=(
-    [base]="9.7"
-    [haproxy]="3.3.6"
-    [httpd]="2.4.66"
-    [mariadb]="12.3.1"
+    [base]="9.8"
+    [haproxy]="3.4.0"
+    [httpd]="2.4.68"
+    [mariadb]="13.0.1"
     [pdns]="4.9"
     [pdns-recursor]="5.2"
     [php-8.0]="8.0.30-${VCS_REF}"
-    [php-8.3-cli]="8.3.30-${VCS_REF}"
-    [php-8.3-fpm]="8.3.30-${VCS_REF}"
-    [php-dev]="8.3.30-${VCS_REF}"
+    [php-8.3-cli]="8.3.31-${VCS_REF}"
+    [php-8.3-fpm]="8.3.31-${VCS_REF}"
+    [php-dev]="8.3.31-${VCS_REF}"
 )
 
 declare -A CONTEXT=(
