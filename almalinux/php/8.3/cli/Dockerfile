@@ -40,6 +40,6 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     chown "${DEFAULT_USER}:${DEFAULT_GROUP}" /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log; \
     ln -snf /usr/php83/usr/bin/php /usr/local/bin/php; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/*
 
 COPY www.ini /usr/php83/etc/php.d/99-www.ini

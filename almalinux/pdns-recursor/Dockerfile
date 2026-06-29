@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs pdns-recursor; \
     mkdir -p /var/run/pdns-recursor; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/*
 
 COPY recursor.conf /etc/pdns/recursor.conf
 COPY startup.sh /usr/local/bin/startup.sh

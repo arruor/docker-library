@@ -27,7 +27,7 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
     dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
-        MariaDB-client bash curl fcgi php80ti php80ti-bcmath php80ti-cli php80ti-common php80ti-dba \
+        MariaDB-client fcgi php80ti php80ti-bcmath php80ti-cli php80ti-common php80ti-dba \
         php80ti-fpm php80ti-gd php80ti-gmp php80ti-igbinary php80ti-imap php80ti-intl php80ti-ldap \
         php80ti-mbstring php80ti-msgpack php80ti-mysqlnd php80ti-odbc php80ti-opcache php80ti-openssl \
         php80ti-pdo php80ti-pdo-dblib php80ti-process php80ti-redis php80ti-soap php80ti-sodium \
@@ -41,7 +41,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     chown "${DEFAULT_USER}:${DEFAULT_GROUP}" /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log; \
     ln -snf /usr/php80/usr/bin/php /usr/local/bin/php; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/*
 
 COPY --from=composer/composer:2-bin /composer /usr/local/bin/composer
 COPY www.ini /usr/php80/etc/php.d/99-www.ini

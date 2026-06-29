@@ -23,9 +23,9 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
     dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
-        bash pdns pdns-backend-mysql pdns-backend-sqlite sqlite; \
+        pdns pdns-backend-mysql pdns-backend-sqlite sqlite; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/*
 
 COPY startup.sh /usr/local/bin/startup.sh
 

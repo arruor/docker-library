@@ -27,7 +27,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     mkdir -p /docker-entrypoint-initdb.d /usr/local/bin/pre-exec.d /usr/local/bin/pre-init.d; \
     chmod -R 0755 /usr/local/bin; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/* /usr/share/doc /usr/share/info /usr/share/man /usr/lib/locale/*
+    rm -rf /tmp/* /var/tmp/* /usr/share/doc /usr/share/info /usr/share/man /usr/lib/locale/*
 
 COPY startup.sh /usr/local/bin/startup.sh
 

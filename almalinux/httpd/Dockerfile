@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     ln -snf /dev/stdout /var/log/httpd/access_log; \
     ln -snf /dev/stderr /var/log/httpd/error_log; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
+    rm -rf dnf /tmp/* /var/tmp/*
 
 COPY 000-proxy.conf /etc/httpd/conf.d/000-proxy.conf
 

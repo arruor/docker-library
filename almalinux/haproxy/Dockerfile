@@ -27,7 +27,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     ln -snf /dev/stdout /var/log/haproxy.log; \
     ln -snf /dev/stderr /var/log/haproxy-error.log; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/*
 
 # https://www.haproxy.org/download/1.8/doc/management.txt
 # "4. Stopping and restarting HAProxy"

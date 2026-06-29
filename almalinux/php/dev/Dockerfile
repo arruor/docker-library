@@ -23,9 +23,9 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
     dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs install \
-        bash curl gettext git MariaDB-client nodejs patch sudo tar unzip; \
+        gettext git MariaDB-client nodejs patch sudo tar unzip; \
     dnf clean all; \
-    rm -rf /var/cache/dnf /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/*
 
 COPY --from=composer/composer:2-bin /composer /usr/local/bin/composer
 
