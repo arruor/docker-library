@@ -22,7 +22,7 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
-    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs --enablerepo=mariadb123 \
+    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs --enablerepo=mariadb13 \
         MariaDB MariaDB-client MariaDB-server MariaDB-shared pwgen; \
     mkdir -p /docker-entrypoint-initdb.d /usr/local/bin/pre-exec.d /usr/local/bin/pre-init.d; \
     chmod -R 0755 /usr/local/bin; \
