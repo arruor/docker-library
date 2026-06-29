@@ -114,7 +114,7 @@ declare -A IMAGE_NAME=(
 
 declare -A VERSION=(
     [base]="9.8"
-    [haproxy]="3.4.0"
+    [haproxy]="3.4.1"
     [httpd]="2.4.68"
     [mariadb]="13.0.1"
     [pdns]="4.9"
