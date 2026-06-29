@@ -32,7 +32,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     dnf config-manager --add-repo http://yum.lhr.stackcp.net/yum/al9-local-20i-docker.repo; \
     dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs --allowerasing install \
         ca-certificates bash curl mtr net-tools procps-ng python3-dbus python3-systemd \
-        tcptraceroute tzdata vim-minimal; \
+        tcptraceroute tzdata vim-minimal cronie; \
     ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime; \
     echo "${TZ}" > /etc/timezone; \
     update-ca-trust; \
