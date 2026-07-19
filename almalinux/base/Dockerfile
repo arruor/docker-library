@@ -36,6 +36,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
         ca-certificates bash curl mtr net-tools procps-ng python3-dbus python3-systemd \
         tcptraceroute tzdata vim-minimal cronie rsyslog rsyslog-logrotate; \
     dnf -y update; \
+    dnf -y remove dnf-plugins-core python3-dnf-plugins-core; \
     ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime; \
     echo "${TZ}" > /etc/timezone; \
     update-ca-trust; \
