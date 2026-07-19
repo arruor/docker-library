@@ -1,32 +1,36 @@
-FROM arruor/alpine:latest
+ARG BASE_IMAGE=docker.io/arruor/alpine:3.21.2
+FROM ${BASE_IMAGE}
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG VER
+ARG VERSION
+ARG VCS_URL
+ARG VENDOR="20i Ltd"
+ARG BASE_IMAGE
 
-LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    architecture="amd64/x86_64" \
+LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.base.name="${BASE_IMAGE}" \
     com.powerdns.pdns-recursor.version="5.1.3-r0" \
-    alpine-version=$VER \
-    build=$BUILD_DATE \
     org.opencontainers.image.title="pdns-recursor-alpine" \
     org.opencontainers.image.description="PowerDNS Recursor image running on Alpine Linux" \
-    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="5.1.3-r0" \
-    org.opencontainers.image.url="https://hub.docker.com/r/arruor/pdns-recursor" \
-    org.opencontainers.image.source="https://github.com/arruor/docker-library/alpine/pdns-recursor" \
-    org.opencontainers.image.revision=$VCS_REF \
-    org.opencontainers.image.created=$BUILD_DATE
+    org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.vendor="${VENDOR}" \
+    org.opencontainers.image.version="${VERSION}" \
+    org.opencontainers.image.url="${VCS_URL}" \
+    org.opencontainers.image.source="${VCS_URL}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.licenses="Apache-2.0"
 
-RUN apk --no-cache update && apk --no-cache upgrade && sync && \
-    apk add --no-cache pdns-recursor bind-tools && \
-    mkdir -p /var/run/pdns-recursor && \
-    rm -f /var/cache/apk/*
+RUN set -eux; \
+    apk upgrade --no-cache; \
+    apk add --no-cache bind-tools pdns-recursor; \
+    mkdir -p /var/run/pdns-recursor; \
+    rm -rf /var/cache/apk/* /tmp/*
 
 COPY recursor.conf /etc/pdns/recursor.conf
 
-ADD startup.sh /usr/local/bin/startup.sh
+COPY --chmod=0755 startup.sh /usr/local/bin/startup.sh
 
 EXPOSE 53/udp 53/tcp 8080/tcp
 

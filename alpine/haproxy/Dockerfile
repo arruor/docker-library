@@ -1,4 +1,5 @@
-FROM arruor/alpine:latest
+ARG BASE_IMAGE=docker.io/arruor/alpine:3.21.2
+FROM ${BASE_IMAGE}
 
 ARG HAPROXY_VERSION=3.1.3
 ARG HAPROXY_URL=https://www.haproxy.org/download/3.1/src/haproxy-3.1.3.tar.gz
@@ -9,47 +10,39 @@ ARG HAPROXY_USER=haproxy
 ARG HAPROXY_GROUP=haproxy
 ARG BUILD_DATE
 ARG VCS_REF
-ARG VER
+ARG VERSION
+ARG VCS_URL
+ARG VENDOR="20i Ltd"
+ARG BASE_IMAGE
 
 ENV HAPROXY_VERSION=${HAPROXY_VERSION}
-ENV HAPROXY_URL=${HAPROXY_URL}
-ENV HAPROXY_SHA256=${HAPROXY_SHA256}
-ENV DEFAULT_UID=${DEFAULT_UID}
-ENV DEFAULT_GID=${DEFAULT_GID}
-ENV HAPROXY_USER=${HAPROXY_USER}
-ENV HAPROXY_GROUP=${HAPROXY_GROUP}
 
-LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    architecture="amd64/x86_64" \
-    alpine-version=$VER \
-    build=$BUILD_DATE \
+LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.base.name="${BASE_IMAGE}" \
     org.opencontainers.image.title="haproxy-alpine" \
     org.opencontainers.image.description="HAProxy Image for Alpine Linux" \
-    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="3.1.3" \
-    org.opencontainers.image.url="https://hub.docker.com/r/arruor/haproxy" \
-    org.opencontainers.image.source="https://github.com/arruor/docker-library/alpine/haproxy" \
-    org.opencontainers.image.revision=$VCS_REF \
-    org.opencontainers.image.created=$BUILD_DATE
+    org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.vendor="${VENDOR}" \
+    org.opencontainers.image.version="${VERSION}" \
+    org.opencontainers.image.url="${VCS_URL}" \
+    org.opencontainers.image.source="${VCS_URL}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.licenses="Apache-2.0"
 
-# roughly, https://git.alpinelinux.org/aports/tree/main/haproxy/haproxy.pre-install?h=3.12-stable
 RUN set -eux; \
-	addgroup --gid ${DEFAULT_GID} --system ${HAPROXY_GROUP}; \
+	addgroup --gid "${DEFAULT_GID}" --system "${HAPROXY_GROUP}"; \
 	adduser \
 		--disabled-password \
 		--home /var/lib/haproxy \
-		--ingroup haproxy \
+		--ingroup "${HAPROXY_GROUP}" \
 		--no-create-home \
 		--system \
-		--uid ${DEFAULT_UID} \
-		${HAPROXY_USER} \
+		--uid "${DEFAULT_UID}" \
+		"${HAPROXY_USER}" \
 	; \
 	mkdir /var/lib/haproxy; \
-	chown ${HAPROXY_USER}:${HAPROXY_GROUP} /var/lib/haproxy
-
-# see https://sources.debian.net/src/haproxy/jessie/debian/rules/ for some helpful navigation of the possible "make" arguments
-RUN set -eux; \
+	chown "${HAPROXY_USER}:${HAPROXY_GROUP}" /var/lib/haproxy; \
 	\
 	apk add --no-cache --virtual .build-deps \
 		gcc \
@@ -63,6 +56,7 @@ RUN set -eux; \
 		readline-dev \
 		tar \
 	; \
+    apk add --no-cache bash rsyslog; \
 	\
 	wget -O haproxy.tar.gz "$HAPROXY_URL"; \
 	echo "$HAPROXY_SHA256 *haproxy.tar.gz" | sha256sum -c; \
@@ -87,7 +81,7 @@ RUN set -eux; \
 	eval "make -C /usr/src/haproxy install-bin $makeOpts"; \
 	\
 	mkdir -p /usr/local/etc/haproxy; \
-	chown -R ${HAPROXY_USER}:${HAPROXY_GROUP} /usr/local/etc/haproxy; \
+	chown -R "${HAPROXY_USER}:${HAPROXY_GROUP}" /usr/local/etc/haproxy; \
     chmod 0755 /usr/local/etc/haproxy; \
 	rm -rf /usr/src/haproxy; \
 	\
@@ -98,17 +92,12 @@ RUN set -eux; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --no-network --virtual .haproxy-rundeps $runDeps; \
-	apk del --no-network .build-deps; apk add bash \
-	\
-# smoke test
+	apk del --no-network .build-deps; \
+    mkdir -p /etc/rsyslog.d; \
+    touch /var/log/haproxy.log; \
+    ln -sf /dev/stdout /var/log/haproxy.log; \
+    rm -rf /tmp/* /var/cache/apk/*; \
 	haproxy -v
-
-RUN set -exo pipefail \
-    && apk add --no-cache \
-        rsyslog \
-    && mkdir -p /etc/rsyslog.d \
-    && touch /var/log/haproxy.log \
-    && ln -sf /dev/stdout /var/log/haproxy.log
 
 # https://www.haproxy.org/download/1.8/doc/management.txt
 # "4. Stopping and restarting HAProxy"
@@ -116,7 +105,7 @@ RUN set -exo pipefail \
 # "graceful stop is triggered when the SIGUSR1 signal is sent to the haproxy process"
 STOPSIGNAL SIGUSR1
 
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/
 COPY rsyslog.conf /etc/rsyslog.conf
 COPY haproxy.conf /etc/rsyslog.d/
 ENTRYPOINT ["docker-entrypoint.sh"]

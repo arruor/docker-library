@@ -1,38 +1,39 @@
-FROM arruor/alpine:latest
+ARG BASE_IMAGE=docker.io/arruor/alpine:3.21.2
+FROM ${BASE_IMAGE}
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG VER
+ARG VERSION
+ARG VCS_URL
+ARG VENDOR="20i Ltd"
+ARG BASE_IMAGE
 
-LABEL maintainer="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    architecture="amd64/x86_64" \
+LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.base.name="${BASE_IMAGE}" \
     com.powerdns.version="4.9.2-r0" \
-    alpine-version=$VER \
-    build=$BUILD_DATE \
     org.opencontainers.image.title="arruor/pdns" \
     org.opencontainers.image.description="PowerDNS image running on Alpine Linux" \
-    org.opencontainers.image.authors="Dimitar 'Arruor' Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.vendor="Dimitar 'Arruor' Nikov" \
-    org.opencontainers.image.version="4.9.2-r0" \
-    org.opencontainers.image.url="https://hub.docker.com/r/arruor/pdns" \
-    org.opencontainers.image.source="https://github.com/arruor/docker-library/alpine/pdns" \
-    org.opencontainers.image.revision=$VCS_REF \
-    org.opencontainers.image.created=$BUILD_DATE
+    org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
+    org.opencontainers.image.vendor="${VENDOR}" \
+    org.opencontainers.image.version="${VERSION}" \
+    org.opencontainers.image.url="${VCS_URL}" \
+    org.opencontainers.image.source="${VCS_URL}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.licenses="Apache-2.0"
 
-RUN apk --no-cache update && apk --no-cache upgrade && sync && \
-    apk add --no-cache sqlite pdns pdns-backend-sqlite3 pdns-backend-mysql bash && \
-    rm -f /var/cache/apk/*
+RUN set -eux; \
+    apk upgrade --no-cache; \
+    apk add --no-cache bash pdns pdns-backend-mysql pdns-backend-sqlite3 sqlite; \
+    mkdir -p /usr/local/share/pdns /var/lib/powerdns; \
+    chmod -R 0755 /usr/local/bin /var/lib/powerdns; \
+    chown -R pdns:pdns /var/lib/powerdns; \
+    rm -rf /var/cache/apk/* /tmp/*
 
-RUN mkdir -p /usr/local/share/pdns && \
-    mkdir -p /var/lib/powerdns && \
-    chmod -R 0755 /usr/local/bin/ && \
-    chmod -R 0755 /var/lib/powerdns && \
-    chown -R pdns:pdns /var/lib/powerdns
-
-ADD startup.sh /usr/local/bin/startup.sh
-ADD schema.sqlite3.sql /usr/local/share/pdns
-ADD schema.mysql.sql /usr/local/share/pdns
-ADD pdns.sample.conf /usr/local/share/pdns
+COPY --chmod=0755 startup.sh /usr/local/bin/startup.sh
+COPY schema.sqlite3.sql /usr/local/share/pdns
+COPY schema.mysql.sql /usr/local/share/pdns
+COPY pdns.sample.conf /usr/local/share/pdns
 
 EXPOSE 53/udp 53/tcp 8080/tcp
 
