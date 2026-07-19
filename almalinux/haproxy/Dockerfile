@@ -1,4 +1,5 @@
-FROM hub.lhr.stackcp.net/20i/alma:latest
+ARG BASE_IMAGE=hub.lhr.stackcp.net/20i/alma:9.8
+FROM ${BASE_IMAGE}
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -6,9 +7,10 @@ ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
 ARG TARGETARCH
+ARG BASE_IMAGE
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma:latest" \
+    org.opencontainers.image.base.name="${BASE_IMAGE}" \
     org.opencontainers.image.title="almalinux-haproxy" \
     org.opencontainers.image.description="HAProxy image for 20i" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \
@@ -35,9 +37,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
 # "graceful stop is triggered when the SIGUSR1 signal is sent to the haproxy process"
 STOPSIGNAL SIGUSR1
 
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY haproxy.conf /etc/rsyslog.d/haproxy.conf
-
-RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

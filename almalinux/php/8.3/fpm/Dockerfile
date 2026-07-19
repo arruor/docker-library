@@ -1,4 +1,5 @@
-FROM hub.lhr.stackcp.net/20i/alma:latest
+ARG BASE_IMAGE=hub.lhr.stackcp.net/20i/alma:9.8
+FROM ${BASE_IMAGE}
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
@@ -10,9 +11,10 @@ ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
 ARG TARGETARCH
+ARG BASE_IMAGE
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/alma:latest" \
+    org.opencontainers.image.base.name="${BASE_IMAGE}" \
     org.opencontainers.image.title="almalinux-php-8.3-fpm" \
     org.opencontainers.image.description="PHP 8.3 FPM image for 20i" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \

@@ -1,4 +1,5 @@
-FROM hub.lhr.stackcp.net/20i/php-8.3-cli:latest
+ARG BASE_IMAGE=hub.lhr.stackcp.net/20i/php-8.3-cli:latest
+FROM ${BASE_IMAGE}
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -6,9 +7,10 @@ ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
 ARG TARGETARCH
+ARG BASE_IMAGE
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="hub.lhr.stackcp.net/20i/php-8.3-cli:latest" \
+    org.opencontainers.image.base.name="${BASE_IMAGE}" \
     org.opencontainers.image.title="almalinux-php-dev" \
     org.opencontainers.image.description="PHP Dev image for 20i" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \

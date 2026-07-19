@@ -10,8 +10,49 @@
 
 # Supported tags and respective `Dockerfile` links
 
--	[`php-cli:latest`, `php-cli:8.2.12`, `php-cli:8.2`, `php-cli:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/cli/Dockerfile)
--	[`php-fpm:latest`, `php-fpm:8.2.12`, `php-fpm:8.2`, `php-fpm:8`](https://github.com/arruor/docker-library/blob/main/alpine/php/fpm/Dockerfile)
+-	[`20i/alma:latest`, `20i/alma:9.8`]([https://github.com/arruor/docker-library/blob/main/almalinux/base/Dockerfile])
+-	[`20i/haproxy:latest`, `20i/haproxy:3.4.2`]([https://github.com/arruor/docker-library/blob/main/almalinux/haproxy/Dockerfile])
+-	[`20i/httpd:latest`, `20i/httpd:2.4.68`]([https://github.com/arruor/docker-library/blob/main/almalinux/httpd/Dockerfile])
+-	[`20i/mariadb:latest`, `20i/mariadb:13.0.1`]([https://github.com/arruor/docker-library/blob/main/almalinux/mariadb/Dockerfile])
+-	[`20i/pdns:latest`, `20i/pdns:4.9`]([https://github.com/arruor/docker-library/blob/main/almalinux/pdns/Dockerfile])
+-	[`20i/pdns-recursor:latest`, `20i/pdns-recursor:5.2`]([https://github.com/arruor/docker-library/blob/main/almalinux/pdns-recursor/Dockerfile])
+-	[`20i/php-8.0:latest`, `20i/php-8.0:8.0.30`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.0/Dockerfile])
+-	[`20i/php-8.3-cli:latest`, `20i/php-8.3-cli:8.3.32`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.3/cli/Dockerfile])
+-	[`20i/php-8.3-fpm:latest`, `20i/php-8.3-fpm:8.3.32`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.3/fpm/Dockerfile])
+-	[`20i/php-dev:latest`, `20i/php-dev:8.3.32`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/dev/Dockerfile])
+
+# Building
+
+Both image families use BuildKit/buildx and default to `linux/amd64,linux/arm64` when pushing:
+
+```console
+$ ./almalinux/build.sh
+$ ./alpine/build.sh
+```
+
+Build one image locally for the current architecture:
+
+```console
+$ ./almalinux/build.sh --only httpd --no-push
+$ ./alpine/build.sh --only php-fpm --no-push
+```
+
+Push the same multi-platform image tags to multiple registries:
+
+```console
+$ ./almalinux/build.sh --only httpd \
+    --docker-hub 20i \
+    --quay 20i \
+    --ghcr 20i \
+    --gitlab registry.gitlab.local/20i \
+    --harbor hub.lhr.stackcp.net/20i
+```
+
+You can also pass a comma-separated registry list:
+
+```console
+$ REGISTRY_PREFIXES=docker.io/20i,quay.io/20i,ghcr.io/20i,registry.gitlab.local/20i,hub.lhr.stackcp.net/20i ./almalinux/build.sh --only httpd
+```
 
 # Quick reference (cont.)
 

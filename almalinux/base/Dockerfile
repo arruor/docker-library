@@ -1,4 +1,5 @@
-FROM almalinux:9
+ARG BASE_IMAGE=docker.io/library/almalinux:9
+FROM ${BASE_IMAGE}
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -6,9 +7,10 @@ ARG VERSION
 ARG VCS_URL
 ARG VENDOR="20i Ltd"
 ARG TARGETARCH
+ARG BASE_IMAGE
 
 LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
-    org.opencontainers.image.base.name="docker.io/library/almalinux:9" \
+    org.opencontainers.image.base.name="${BASE_IMAGE}" \
     org.opencontainers.image.title="almalinux-base" \
     org.opencontainers.image.description="Base Image for AlmaLinux with 20i tooling and CA certificates" \
     org.opencontainers.image.authors="Dimitar Nikov <dimitar@nikov.net>" \

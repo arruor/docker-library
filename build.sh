@@ -3,33 +3,22 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REGISTRY="${REGISTRY:-hub.lhr.stackcp.net/20i}"
+REGISTRY="hub.lhr.stackcp.net/20i"
 PUSH=1
-PLATFORMS="${PLATFORMS:-linux/amd64,linux/arm64}"
+PLATFORMS_PUSH="linux/amd64,linux/arm64"
 LOCAL_PLATFORM=""
 SKIP_LIST=""
 ONLY_LIST=""
-REGISTRY_PREFIXES_CSV="${REGISTRY_PREFIXES:-${REGISTRY}}"
-REGISTRY_PREFIXES=()
 
 usage() {
     cat <<'EOF'
 Usage: ./build.sh [options]
 
 Options:
-  --skip a,b,c              Skip one or more images
-  --only a,b,c              Build only the listed images
-  --no-push                 Build locally only, do not push
-  --platforms a,b           Target platforms when pushing (default: linux/amd64,linux/arm64)
-  --registries a,b          Registry prefixes to tag/push, for example:
-                            docker.io/20i,quay.io/20i,ghcr.io/20i,gitlab.local/20i,harbor.local/20i
-  --registry prefix         Add one registry prefix; can be repeated
-  --docker-hub namespace    Add Docker Hub namespace as docker.io/<namespace>
-  --quay namespace          Add Red Hat Quay namespace as quay.io/<namespace>
-  --ghcr owner              Add GitHub Container Registry owner as ghcr.io/<owner>
-  --gitlab prefix           Add GitLab registry prefix, e.g. registry.gitlab.local/group/project
-  --harbor prefix           Add Harbor registry prefix, e.g. hub.lhr.stackcp.net/20i
-  -h, --help                Show this help
+  --skip a,b,c   Skip one or more images
+  --only a,b,c   Build only the listed images
+  --no-push      Build locally only, do not push to Harbour
+  -h, --help     Show this help
 
 Known image keys:
   base
@@ -50,31 +39,6 @@ normalize_csv() {
     value="${value// /}"
     value="${value,,}"
     echo "$value"
-}
-
-trim_slashes() {
-    local value="${1:-}"
-    value="${value%/}"
-    echo "$value"
-}
-
-add_registry_prefix() {
-    local prefix
-    prefix="$(trim_slashes "${1:-}")"
-    if [[ -n "${prefix}" ]]; then
-        REGISTRY_PREFIXES+=("${prefix}")
-    fi
-}
-
-add_registry_prefixes_csv() {
-    local csv="${1:-}"
-    local item
-    local -a items
-    csv="${csv// /}"
-    IFS=',' read -r -a items <<< "${csv}"
-    for item in "${items[@]}"; do
-        add_registry_prefix "${item}"
-    done
 }
 
 csv_contains() {
@@ -111,41 +75,6 @@ while [[ $# -gt 0 ]]; do
             PUSH=0
             shift
             ;;
-        --platforms)
-            PLATFORMS="${2:-}"
-            shift 2
-            ;;
-        --registries)
-            REGISTRY_PREFIXES_CSV="${2:-}"
-            REGISTRY_PREFIXES=()
-            add_registry_prefixes_csv "${REGISTRY_PREFIXES_CSV}"
-            REGISTRY_PREFIXES_CSV=""
-            shift 2
-            ;;
-        --registry)
-            add_registry_prefix "${2:-}"
-            shift 2
-            ;;
-        --docker-hub)
-            add_registry_prefix "docker.io/${2:-}"
-            shift 2
-            ;;
-        --quay)
-            add_registry_prefix "quay.io/${2:-}"
-            shift 2
-            ;;
-        --ghcr)
-            add_registry_prefix "ghcr.io/${2:-}"
-            shift 2
-            ;;
-        --gitlab)
-            add_registry_prefix "${2:-}"
-            shift 2
-            ;;
-        --harbor)
-            add_registry_prefix "${2:-}"
-            shift 2
-            ;;
         -h|--help)
             usage
             exit 0
@@ -163,15 +92,6 @@ if [[ -n "${SKIP_LIST}" && -n "${ONLY_LIST}" ]]; then
     exit 1
 fi
 
-if [[ "${#REGISTRY_PREFIXES[@]}" -eq 0 ]]; then
-    add_registry_prefixes_csv "${REGISTRY_PREFIXES_CSV}"
-fi
-
-if [[ "${#REGISTRY_PREFIXES[@]}" -eq 0 ]]; then
-    echo "At least one registry prefix is required." >&2
-    exit 1
-fi
-
 if [[ "${PUSH}" -eq 0 ]]; then
     LOCAL_PLATFORM="$(detect_local_platform)"
 fi
@@ -179,17 +99,17 @@ fi
 BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 VCS_REF="$(git -C "${ROOT_DIR}" rev-parse --short HEAD 2>/dev/null || echo 'nogit')"
 
-declare -A IMAGE_REPO=(
-    [base]="alma"
-    [haproxy]="haproxy"
-    [httpd]="httpd"
-    [mariadb]="mariadb"
-    [pdns]="pdns"
-    [pdns-recursor]="pdns-recursor"
-    [php-8.0]="php-8.0"
-    [php-8.3-cli]="php-8.3-cli"
-    [php-8.3-fpm]="php-8.3-fpm"
-    [php-dev]="php-dev"
+declare -A IMAGE_NAME=(
+    [base]="${REGISTRY}/alma"
+    [haproxy]="${REGISTRY}/haproxy"
+    [httpd]="${REGISTRY}/httpd"
+    [mariadb]="${REGISTRY}/mariadb"
+    [pdns]="${REGISTRY}/pdns"
+    [pdns-recursor]="${REGISTRY}/pdns-recursor"
+    [php-8.0]="${REGISTRY}/php-8.0"
+    [php-8.3-cli]="${REGISTRY}/php-8.3-cli"
+    [php-8.3-fpm]="${REGISTRY}/php-8.3-fpm"
+    [php-dev]="${REGISTRY}/php-dev"
 )
 
 declare -A VERSION=(
@@ -199,10 +119,10 @@ declare -A VERSION=(
     [mariadb]="13.0.1"
     [pdns]="4.9"
     [pdns-recursor]="5.2"
-    [php-8.0]="8.0.30"
-    [php-8.3-cli]="8.3.32"
-    [php-8.3-fpm]="8.3.32"
-    [php-dev]="8.3.32"
+    [php-8.0]="8.0.30-${VCS_REF}"
+    [php-8.3-cli]="8.3.32-${VCS_REF}"
+    [php-8.3-fpm]="8.3.32-${VCS_REF}"
+    [php-dev]="8.3.32-${VCS_REF}"
 )
 
 declare -A CONTEXT=(
@@ -281,46 +201,22 @@ ensure_builder() {
     docker buildx inspect --bootstrap >/dev/null
 }
 
-image_ref() {
-    local prefix="$1"
-    local key="$2"
-    echo "${prefix}/${IMAGE_REPO[${key}]}"
-}
-
-base_image_for() {
-    local key="$1"
-    local primary="${REGISTRY_PREFIXES[0]}"
-
-    case "${key}" in
-        base) echo "docker.io/library/almalinux:9" ;;
-        php-dev) echo "$(image_ref "${primary}" php-8.3-cli):${VERSION[php-8.3-cli]}" ;;
-        *) echo "$(image_ref "${primary}" base):${VERSION[base]}" ;;
-    esac
-}
-
 build_image() {
     local key="$1"
     local args=(
         docker buildx build
         --pull
-        --build-arg "BASE_IMAGE=$(base_image_for "${key}")"
         --build-arg "BUILD_DATE=${BUILD_DATE}"
         --build-arg "VCS_REF=${VCS_REF}"
         --build-arg "VERSION=${VERSION[${key}]}"
         --build-arg "VCS_URL=${VCS_URL[${key}]}"
+        -t "${IMAGE_NAME[${key}]}:${VERSION[${key}]}"
+        -t "${IMAGE_NAME[${key}]}:latest"
         -f "${ROOT_DIR}/${DOCKERFILE[${key}]}"
     )
-    local prefix
-
-    for prefix in "${REGISTRY_PREFIXES[@]}"; do
-        args+=(
-            -t "$(image_ref "${prefix}" "${key}"):${VERSION[${key}]}"
-            -t "$(image_ref "${prefix}" "${key}"):latest"
-        )
-    done
 
     if [[ "${PUSH}" -eq 1 ]]; then
-        args+=(--platform "${PLATFORMS}" --push)
+        args+=(--platform "${PLATFORMS_PUSH}" --push)
     else
         args+=(--platform "${LOCAL_PLATFORM}" --load)
     fi
@@ -329,10 +225,8 @@ build_image() {
 
     echo
     echo "==> Building ${key}"
-    echo "    Image: $(image_ref "${REGISTRY_PREFIXES[0]}" "${key}")"
+    echo "    Image: ${IMAGE_NAME[${key}]}"
     echo "    Version: ${VERSION[${key}]}"
-    echo "    Base: $(base_image_for "${key}")"
-    echo "    Registries: ${REGISTRY_PREFIXES[*]}"
     "${args[@]}"
 }
 
