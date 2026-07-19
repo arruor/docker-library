@@ -31,7 +31,7 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN set -eux; \
     apk upgrade --no-cache; \
-    apk add --no-cache bash curl mysql-client \
+    apk add --no-cache bash curl dcron mysql-client \
         php8 php8-fpm php8-bcmath php8-bz2 php8-calendar php8-common \
         php8-ctype php8-curl php8-dba php8-dom php8-exif php8-ffi php8-fileinfo php8-ftp \
         php8-gd php8-gettext php8-gmp php8-iconv php8-intl php8-ldap php8-mbstring php8-mysqli \
@@ -49,10 +49,13 @@ RUN set -eux; \
     adduser -S -D -G "${DEFAULT_GROUP}" -u "${DEFAULT_UID}" "${DEFAULT_USER}"; \
     mkdir -p /var/lib/php8/session /var/lib/php8/opcache /var/lib/php8/wsdlcache /var/log/php8; \
     chown -R "${DEFAULT_USER}:${DEFAULT_GROUP}" /var/lib/php8 /var/log/php8; \
-    touch /var/log/php8/www-error.log /var/log/php8/error.log; \
+    touch /var/log/php8/www-error.log /var/log/php8/error.log /var/log/crond.log; \
     chown "${DEFAULT_USER}:${DEFAULT_GROUP}" /var/log/php8/www-error.log /var/log/php8/error.log; \
     rm -rf /var/cache/apk/* /tmp/*
 
 COPY www.ini /etc/php8/conf.d/99-www.ini
 COPY www.ini /etc/php8/cli/conf.d/99-www.ini
 COPY www.pool.conf /etc/php8/php-fpm.d/www.conf
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

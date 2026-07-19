@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+start_crond() {
+    mkdir -p /var/log
+    touch /var/log/crond.log
+    rm -f /var/run/crond.pid /run/crond.pid
+    crond -L /var/log/crond.log
+}
+
 SQL_SCHEMA=/usr/local/share/pdns/schema.sqlite3.sql
 DB_TABLE=/var/lib/powerdns/pdns.sqlite
 PDNS_CONF=/usr/local/share/pdns/pdns.sample.conf
@@ -19,8 +26,9 @@ if [ "${PDNS_EXTERNAL_DB}" == "" ]; then
   fi
 fi
 
-# RUN Service
-pdns_server \
+start_crond
+
+exec pdns_server \
 	--loglevel=${PDNS_LOG_LEVEL:-0} \
 	--webserver-allow-from=${PDNS_WEBSERVER_ALLOWED_FROM:-"127.0.0.1,::1"} \
 	--webserver-password=${PDNS_WEBSERVER_PASSWORD:-""} \

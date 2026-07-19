@@ -33,13 +33,13 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
         php83ti-gmp php83ti-igbinary php83ti-imap php83ti-intl php83ti-ldap php83ti-mbstring \
         php83ti-msgpack php83ti-mysqlnd php83ti-odbc php83ti-opcache php83ti-openssl php83ti-pdo \
         php83ti-pdo-dblib php83ti-process php83ti-redis php83ti-soap php83ti-sodium php83ti-ssh2 \
-        php83ti-tidy php83ti-xml php83ti-xdebug php83ti-zip; \
+        php83ti-tidy php83ti-xml php83ti-xdebug php83ti-zip rsyslog; \
     rm -f /etc/php-fpm.d/www.conf; \
     groupadd -g "${DEFAULT_GID}" -r "${DEFAULT_GROUP}" || true; \
     id -u "${DEFAULT_USER}" >/dev/null 2>&1 || adduser -r -g "${DEFAULT_GROUP}" -u "${DEFAULT_UID}" -d /home/www-data -m "${DEFAULT_USER}"; \
     mkdir -p /var/lib/php/session /var/lib/php/opcache /var/lib/php/wsdlcache /var/log/php-fpm /run/php-fpm; \
     chown -R "${DEFAULT_USER}:${DEFAULT_GROUP}" /var/lib/php /var/log/php-fpm /run/php-fpm; \
-    touch /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log; \
+    touch /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log /var/log/crond.log; \
     chown "${DEFAULT_USER}:${DEFAULT_GROUP}" /var/log/php-fpm/www-error.log /var/log/php-fpm/error.log; \
     ln -snf /usr/php83/usr/bin/php /usr/local/bin/php; \
     dnf clean all; \
@@ -48,9 +48,8 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
 COPY www.ini /usr/php83/etc/php.d/99-www.ini
 COPY www.pool.conf /usr/php83/etc/php-fpm.d/www.conf
 COPY php-fpm.conf /usr/php83/etc/php-fpm.conf
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 HEALTHCHECK --interval=30s --timeout=3s CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET /bin/cgi-fcgi -bind -connect 127.0.0.1:9001 || exit 1
 
-USER www-data
-
-CMD ["/usr/php83/usr/sbin/php-fpm", "-F", "--fpm-config", "/usr/php83/etc/php-fpm.conf"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

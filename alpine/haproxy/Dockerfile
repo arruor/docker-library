@@ -56,7 +56,7 @@ RUN set -eux; \
 		readline-dev \
 		tar \
 	; \
-    apk add --no-cache bash rsyslog; \
+    apk add --no-cache bash dcron rsyslog; \
 	\
 	wget -O haproxy.tar.gz "$HAPROXY_URL"; \
 	echo "$HAPROXY_SHA256 *haproxy.tar.gz" | sha256sum -c; \
@@ -94,7 +94,7 @@ RUN set -eux; \
 	apk add --no-network --virtual .haproxy-rundeps $runDeps; \
 	apk del --no-network .build-deps; \
     mkdir -p /etc/rsyslog.d; \
-    touch /var/log/haproxy.log; \
+    touch /var/log/haproxy.log /var/log/crond.log; \
     ln -sf /dev/stdout /var/log/haproxy.log; \
     rm -rf /tmp/* /var/cache/apk/*; \
 	haproxy -v
@@ -109,5 +109,3 @@ COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/
 COPY rsyslog.conf /etc/rsyslog.conf
 COPY haproxy.conf /etc/rsyslog.d/
 ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]

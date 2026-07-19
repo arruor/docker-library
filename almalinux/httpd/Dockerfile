@@ -24,12 +24,14 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
-    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs httpd httpd-tools; \
+    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs httpd httpd-tools rsyslog; \
+    touch /var/log/crond.log; \
     ln -snf /dev/stdout /var/log/httpd/access_log; \
     ln -snf /dev/stderr /var/log/httpd/error_log; \
     dnf clean all; \
     rm -rf /tmp/* /var/tmp/*
 
 COPY 000-proxy.conf /etc/httpd/conf.d/000-proxy.conf
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
-CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

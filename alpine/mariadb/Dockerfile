@@ -24,15 +24,16 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN set -eux; \
     apk upgrade --no-cache; \
-    apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen; \
+    apk add --no-cache dcron mariadb mariadb-client mariadb-server-utils pwgen; \
+    touch /var/log/crond.log; \
     mkdir -p /docker-entrypoint-initdb.d /usr/local/bin/pre-exec.d /usr/local/bin/pre-init.d; \
     chmod -R 0755 /usr/local/bin; \
     rm -rf /var/cache/apk/* /tmp/*
 
-COPY --chmod=0755 startup.sh /usr/local/bin/startup.sh
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 3306
 
 VOLUME ["/var/lib/mysql"]
 
-ENTRYPOINT ["/usr/local/bin/startup.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

@@ -24,7 +24,7 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN set -eux; \
     apk upgrade --no-cache; \
-    apk add --no-cache bash curl mysql-client \
+    apk add --no-cache bash curl dcron mysql-client \
         php84 php84-fpm php84-bcmath php84-bz2 php84-calendar php84-common \
         php84-ctype php84-curl php84-dba php84-dom php84-exif php84-ffi php84-fileinfo php84-ftp \
         php84-gd php84-gettext php84-gmp php84-iconv php84-intl php84-ldap php84-mbstring php84-mysqli \
@@ -36,4 +36,9 @@ RUN set -eux; \
         php84-pecl-imagick php84-pecl-imap php84-pecl-lzf php84-pecl-mailparse php84-pecl-memcached \
         php84-pecl-mongodb php84-pecl-msgpack php84-pecl-redis php84-pecl-ssh2 php84-pecl-xdebug \
         php84-pecl-xhprof php84-pecl-xhprof-assets php84-pecl-xlswriter php84-pecl-yaml php84-pecl-zstd; \
+    touch /var/log/crond.log; \
     rm -rf /var/cache/apk/* /tmp/*
+
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

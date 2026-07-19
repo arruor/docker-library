@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+start_supporting_services() {
+    mkdir -p /etc/rsyslog.d /var/log
+    touch /var/log/crond.log
+    printf 'cron.* /var/log/crond.log\n& stop\n' > /etc/rsyslog.d/00-crond.conf
+    rm -f /var/run/rsyslogd.pid /var/run/crond.pid /run/crond.pid
+    rsyslogd
+    crond
+}
+
 SQL_SCHEMA=/usr/local/share/pdns/schema.sqlite3.sql
 DB_TABLE=/var/lib/powerdns/pdns.sqlite
 PDNS_CONF=/usr/local/share/pdns/pdns.sample.conf
@@ -19,8 +28,9 @@ if [ "${PDNS_EXTERNAL_DB}" == "" ]; then
   fi
 fi
 
-# RUN Service
-pdns_server \
+start_supporting_services
+
+exec pdns_server \
 	--loglevel=${PDNS_LOG_LEVEL:-0} \
 	--webserver-allow-from=${PDNS_WEBSERVER_ALLOWED_FROM:-"127.0.0.1,::1"} \
 	--webserver-password=${PDNS_WEBSERVER_PASSWORD:-""} \

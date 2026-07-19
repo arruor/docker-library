@@ -24,15 +24,15 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
-    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs pdns-recursor; \
+    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs pdns-recursor rsyslog; \
     mkdir -p /var/run/pdns-recursor; \
+    touch /var/log/crond.log; \
     dnf clean all; \
     rm -rf /tmp/* /var/tmp/*
 
 COPY recursor.conf /etc/pdns/recursor.conf
-COPY --chmod=0755 startup.sh /usr/local/bin/startup.sh
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 53/udp 53/tcp 8080/tcp
 
-ENTRYPOINT ["/usr/local/bin/startup.sh"]
-CMD ["/usr/sbin/pdns_recursor"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

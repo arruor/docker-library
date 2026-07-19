@@ -24,8 +24,8 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
-    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs haproxy34ti rsyslog rsyslog-logrotate; \
-    touch /var/log/haproxy.log /var/log/haproxy-error.log; \
+    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs haproxy34ti; \
+    touch /var/log/haproxy.log /var/log/haproxy-error.log /var/log/crond.log; \
     ln -snf /dev/stdout /var/log/haproxy.log; \
     ln -snf /dev/stderr /var/log/haproxy-error.log; \
     dnf clean all; \

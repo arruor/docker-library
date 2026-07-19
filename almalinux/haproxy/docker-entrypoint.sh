@@ -2,7 +2,10 @@
 set -euo pipefail
 
 start_supporting_services() {
-    rm -f /var/run/rsyslogd.pid /var/run/crond.pid
+    mkdir -p /etc/rsyslog.d /var/log
+    touch /var/log/crond.log
+    printf 'cron.* /var/log/crond.log\n& stop\n' > /etc/rsyslog.d/00-crond.conf
+    rm -f /var/run/rsyslogd.pid /var/run/crond.pid /run/crond.pid
     rsyslogd
     crond
 }

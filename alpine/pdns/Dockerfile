@@ -24,17 +24,18 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 
 RUN set -eux; \
     apk upgrade --no-cache; \
-    apk add --no-cache bash pdns pdns-backend-mysql pdns-backend-sqlite3 sqlite; \
+    apk add --no-cache bash dcron pdns pdns-backend-mysql pdns-backend-sqlite3 sqlite; \
     mkdir -p /usr/local/share/pdns /var/lib/powerdns; \
+    touch /var/log/crond.log; \
     chmod -R 0755 /usr/local/bin /var/lib/powerdns; \
     chown -R pdns:pdns /var/lib/powerdns; \
     rm -rf /var/cache/apk/* /tmp/*
 
-COPY --chmod=0755 startup.sh /usr/local/bin/startup.sh
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY schema.sqlite3.sql /usr/local/share/pdns
 COPY schema.mysql.sql /usr/local/share/pdns
 COPY pdns.sample.conf /usr/local/share/pdns
 
 EXPOSE 53/udp 53/tcp 8080/tcp
 
-ENTRYPOINT ["/usr/local/bin/startup.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

@@ -1,5 +1,14 @@
 #!/bin/bash
 
+start_supporting_services() {
+    mkdir -p /etc/rsyslog.d /var/log
+    touch /var/log/crond.log
+    printf 'cron.* /var/log/crond.log\n& stop\n' > /etc/rsyslog.d/00-crond.conf
+    rm -f /var/run/rsyslogd.pid /var/run/crond.pid /run/crond.pid
+    rsyslogd
+    crond
+}
+
 # execute any pre-init scripts
 for i in /usr/local/bin/pre-init.d/*sh
 do
@@ -112,5 +121,7 @@ do
 		. "${i}"
 	fi
 done
+
+start_supporting_services
 
 exec /usr/sbin/mariadbd --user=mysql --console --skip-name-resolve --skip-networking=0 "${@}"

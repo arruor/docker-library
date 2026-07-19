@@ -4,8 +4,15 @@ set -euo pipefail
 set -o errexit
 set -o nounset
 
-rm -f /var/run/rsyslogd.pid
-  rsyslogd
+rm -f /var/run/rsyslogd.pid /var/run/crond.pid /run/crond.pid
+mkdir -p /var/log
+touch /var/log/crond.log
+rsyslogd
+crond -L /var/log/crond.log
+
+if [ "$#" -eq 0 ]; then
+	set -- haproxy -f /usr/local/etc/haproxy/haproxy.cfg
+fi
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then

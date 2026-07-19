@@ -25,16 +25,17 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
     dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs --enablerepo=mariadb13 \
-        MariaDB MariaDB-client MariaDB-server MariaDB-shared pwgen; \
+        MariaDB MariaDB-client MariaDB-server MariaDB-shared pwgen rsyslog; \
+    touch /var/log/crond.log; \
     mkdir -p /docker-entrypoint-initdb.d /usr/local/bin/pre-exec.d /usr/local/bin/pre-init.d; \
     chmod -R 0755 /usr/local/bin; \
     dnf clean all; \
     rm -rf /tmp/* /var/tmp/* /usr/share/doc /usr/share/info /usr/share/man /usr/lib/locale/*
 
-COPY --chmod=0755 startup.sh /usr/local/bin/startup.sh
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 3306
 
 VOLUME ["/var/lib/mysql"]
 
-ENTRYPOINT ["/usr/local/bin/startup.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

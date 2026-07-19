@@ -1,5 +1,12 @@
 #!/bin/bash
 
+start_crond() {
+    mkdir -p /var/log
+    touch /var/log/crond.log
+    rm -f /var/run/crond.pid /run/crond.pid
+    crond -L /var/log/crond.log
+}
+
 # execute any pre-init scripts
 for i in /usr/local/bin/pre-init.d/*sh
 do
@@ -112,5 +119,7 @@ do
 		. "${i}"
 	fi
 done
+
+start_crond
 
 exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0 "${@}"
