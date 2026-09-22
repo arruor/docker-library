@@ -54,6 +54,20 @@ You can also pass a comma-separated registry list:
 $ REGISTRY_PREFIXES=docker.io/20i,quay.io/20i,ghcr.io/20i,registry.gitlab.local/20i,hub.lhr.stackcp.net/20i ./almalinux/build.sh --only httpd
 ```
 
+The AlmaLinux builder publishes the upstream version tag, an immutable
+`<version>-r<revision>` tag, and compatible floating release-line tags. For
+example, an HTTPD build publishes `2.4.68`, `2.4.68-r1`, `2.4`, `2`, and
+`latest`. Increment `--image-revision` (or `IMAGE_REVISION`) when rebuilding
+the same upstream version for security or base-image updates:
+
+```console
+$ ./almalinux/build.sh --only httpd --image-revision 2 --no-cache
+```
+
+Use `--no-latest` when testing or staging a build without moving the `latest`
+pointer. Production deployments should use an immutable revision tag or image
+digest rather than `latest`.
+
 # Quick reference (cont.)
 
 - **Where to file issues**:  

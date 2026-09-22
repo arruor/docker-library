@@ -9,6 +9,12 @@ PLATFORMS="${PLATFORMS:-linux/amd64,linux/arm64}"
 LOCAL_PLATFORM=""
 SKIP_LIST=""
 ONLY_LIST=""
+BUILDER="${BUILDER:-multiarch-builder}"
+PROGRESS="${PROGRESS:-auto}"
+CACHE_REF="${CACHE_REF:-}"
+IMAGE_REVISION="${IMAGE_REVISION:-1}"
+NO_CACHE=0
+PUBLISH_LATEST=1
 REGISTRY_PREFIXES_CSV="${REGISTRY_PREFIXES:-${REGISTRY}}"
 REGISTRY_PREFIXES=()
 
@@ -21,6 +27,12 @@ Options:
   --only a,b,c              Build only the listed images
   --no-push                 Build locally only, do not push
   --platforms a,b           Target platforms when pushing (default: linux/amd64,linux/arm64)
+  --builder name            Buildx builder to use (default: multiarch-builder)
+  --progress mode           Build output: auto, plain, tty, quiet, or rawjson
+  --cache-ref ref           Registry cache prefix (default: <primary>/almalinux-buildcache)
+  --no-cache                Ignore existing build cache and do not export a new cache
+  --image-revision n        Immutable rebuild revision suffix (default: 1)
+  --no-latest               Do not move the latest tag during this build
   --registries a,b          Registry prefixes to tag/push, for example:
                             docker.io/20i,quay.io/20i,ghcr.io/20i,gitlab.local/20i,harbor.local/20i
   --registry prefix         Add one registry prefix; can be repeated
@@ -115,6 +127,30 @@ while [[ $# -gt 0 ]]; do
             PLATFORMS="${2:-}"
             shift 2
             ;;
+        --builder)
+            BUILDER="${2:-}"
+            shift 2
+            ;;
+        --progress)
+            PROGRESS="${2:-}"
+            shift 2
+            ;;
+        --cache-ref)
+            CACHE_REF="${2:-}"
+            shift 2
+            ;;
+        --no-cache)
+            NO_CACHE=1
+            shift
+            ;;
+        --image-revision)
+            IMAGE_REVISION="${2:-}"
+            shift 2
+            ;;
+        --no-latest)
+            PUBLISH_LATEST=0
+            shift
+            ;;
         --registries)
             REGISTRY_PREFIXES_CSV="${2:-}"
             REGISTRY_PREFIXES=()
@@ -172,6 +208,30 @@ if [[ "${#REGISTRY_PREFIXES[@]}" -eq 0 ]]; then
     exit 1
 fi
 
+if [[ -z "${BUILDER}" ]]; then
+    echo "A buildx builder name is required." >&2
+    exit 1
+fi
+
+case "${PROGRESS}" in
+    auto|plain|tty|quiet|rawjson) ;;
+    *)
+        echo "Unsupported progress mode: ${PROGRESS}" >&2
+        exit 1
+        ;;
+esac
+
+if ! [[ "${IMAGE_REVISION}" =~ ^[0-9]+$ ]]; then
+    echo "Image revision must be a non-negative integer: ${IMAGE_REVISION}" >&2
+    exit 1
+fi
+
+if [[ -z "${CACHE_REF}" ]]; then
+    CACHE_REF="${REGISTRY_PREFIXES[0]}/almalinux-buildcache"
+else
+    CACHE_REF="$(trim_slashes "${CACHE_REF}")"
+fi
+
 if [[ "${PUSH}" -eq 0 ]]; then
     LOCAL_PLATFORM="$(detect_local_platform)"
 fi
@@ -203,6 +263,16 @@ declare -A VERSION=(
     [php-8.3-cli]="8.3.32"
     [php-8.3-fpm]="8.3.32"
     [php-dev]="8.3.32"
+)
+
+# PHP image repositories are deliberately pinned to a PHP minor line by their
+# repository name, so derive their floating tag from that line rather than
+# exposing a misleading major-only tag such as php-8.0:8.
+declare -A FLOATING_VERSION_LINE=(
+    [php-8.0]="8.0"
+    [php-8.3-cli]="8.3"
+    [php-8.3-fpm]="8.3"
+    [php-dev]="8.3"
 )
 
 declare -A CONTEXT=(
@@ -272,13 +342,27 @@ should_build() {
     return 0
 }
 
-ensure_builder() {
-    if ! docker buildx inspect multiarch-builder >/dev/null 2>&1; then
-        docker buildx create --name multiarch-builder --driver docker-container --use >/dev/null
-    else
-        docker buildx use multiarch-builder >/dev/null
+floating_tags_for() {
+    local key="$1"
+    local version="${VERSION[${key}]}"
+    local major="${version%%.*}"
+
+    if [[ -n "${FLOATING_VERSION_LINE[${key}]:-}" ]]; then
+        echo "${FLOATING_VERSION_LINE[${key}]}"
+    elif [[ "${version}" == *.*.* ]]; then
+        echo "${version%.*} ${major}"
+    elif [[ "${version}" == *.* ]]; then
+        echo "${major}"
     fi
-    docker buildx inspect --bootstrap >/dev/null
+}
+
+ensure_builder() {
+    if ! docker buildx inspect "${BUILDER}" >/dev/null 2>&1; then
+        docker buildx create --name "${BUILDER}" --driver docker-container --use >/dev/null
+    else
+        docker buildx use "${BUILDER}" >/dev/null
+    fi
+    docker buildx inspect "${BUILDER}" --bootstrap >/dev/null
 }
 
 image_ref() {
@@ -300,6 +384,7 @@ base_image_for() {
 
 build_image() {
     local key="$1"
+    local immutable_tag="${VERSION[${key}]}-r${IMAGE_REVISION}"
     local args=(
         docker buildx build
         --pull
@@ -308,21 +393,64 @@ build_image() {
         --build-arg "VCS_REF=${VCS_REF}"
         --build-arg "VERSION=${VERSION[${key}]}"
         --build-arg "VCS_URL=${VCS_URL[${key}]}"
+        --progress "${PROGRESS}"
         -f "${ROOT_DIR}/${DOCKERFILE[${key}]}"
     )
     local prefix
+    local image_ref_value
+    local tag
+    local -a floating_tags=()
+
+    read -r -a floating_tags <<< "$(floating_tags_for "${key}")"
 
     for prefix in "${REGISTRY_PREFIXES[@]}"; do
+        image_ref_value="$(image_ref "${prefix}" "${key}")"
         args+=(
-            -t "$(image_ref "${prefix}" "${key}"):${VERSION[${key}]}"
-            -t "$(image_ref "${prefix}" "${key}"):latest"
+            -t "${image_ref_value}:${VERSION[${key}]}"
+            -t "${image_ref_value}:${immutable_tag}"
         )
+
+        if [[ "${PUBLISH_LATEST}" -eq 1 ]]; then
+            args+=(-t "${image_ref_value}:latest")
+        fi
+
+        for tag in "${floating_tags[@]}"; do
+            [[ -n "${tag}" ]] && args+=(-t "${image_ref_value}:${tag}")
+        done
     done
 
+    # Registry cache keeps subsequent CI/ephemeral-builder runs fast without
+    # adding cache layers to the published image. Keep one cache namespace per
+    # image so unrelated Dockerfiles cannot evict one another's useful cache.
+    if [[ "${NO_CACHE}" -eq 0 && "${PUSH}" -eq 1 ]]; then
+        args+=(
+            --cache-from "type=registry,ref=${CACHE_REF}/${key}"
+            --cache-to "type=registry,ref=${CACHE_REF}/${key},mode=max,image-manifest=true,oci-mediatypes=true"
+        )
+    elif [[ "${NO_CACHE}" -eq 1 ]]; then
+        args+=(--no-cache)
+    fi
+
     if [[ "${PUSH}" -eq 1 ]]; then
-        args+=(--platform "${PLATFORMS}" --push)
+        # Attestations are stored alongside the image manifest, not in the
+        # runtime filesystem, so they improve provenance/SBOM coverage without
+        # increasing the image's extracted layer size.
+        args+=(
+            --platform "${PLATFORMS}"
+            --provenance=mode=max
+            --sbom=true
+            --push
+        )
     else
-        args+=(--platform "${LOCAL_PLATFORM}" --load)
+        # Docker's local image store does not preserve multi-platform
+        # attestations reliably; disable them for the intentionally local,
+        # single-platform development path.
+        args+=(
+            --platform "${LOCAL_PLATFORM}"
+            --provenance=false
+            --sbom=false
+            --load
+        )
     fi
 
     args+=("${ROOT_DIR}/${CONTEXT[${key}]}")
@@ -331,6 +459,8 @@ build_image() {
     echo "==> Building ${key}"
     echo "    Image: $(image_ref "${REGISTRY_PREFIXES[0]}" "${key}")"
     echo "    Version: ${VERSION[${key}]}"
+    echo "    Immutable tag: ${immutable_tag}"
+    echo "    Latest tag: $([[ "${PUBLISH_LATEST}" -eq 1 ]] && echo enabled || echo disabled)"
     echo "    Base: $(base_image_for "${key}")"
     echo "    Registries: ${REGISTRY_PREFIXES[*]}"
     "${args[@]}"
