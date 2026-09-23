@@ -39,6 +39,7 @@ RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=
     dnf -y remove dnf-plugins-core python3-dnf-plugins-core; \
     ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime; \
     echo "${TZ}" > /etc/timezone; \
+    echo 'precedence ::ffff:0:0/96  100' >> /etc/gai.conf; \
     update-ca-trust; \
     dnf clean all; \
     rm -rf /tmp/* /var/tmp/*
