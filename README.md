@@ -10,16 +10,16 @@
 
 # Supported tags and respective `Dockerfile` links
 
--	[`20i/alma:latest`, `20i/alma:9.8`]([https://github.com/arruor/docker-library/blob/main/almalinux/base/Dockerfile])
--	[`20i/haproxy:latest`, `20i/haproxy:3.4.2`]([https://github.com/arruor/docker-library/blob/main/almalinux/haproxy/Dockerfile])
--	[`20i/httpd:latest`, `20i/httpd:2.4.68`]([https://github.com/arruor/docker-library/blob/main/almalinux/httpd/Dockerfile])
--	[`20i/mariadb:latest`, `20i/mariadb:13.0.1`]([https://github.com/arruor/docker-library/blob/main/almalinux/mariadb/Dockerfile])
+-	[`20i/alma:latest`, `20i/alma:9.9`]([https://github.com/arruor/docker-library/blob/main/almalinux/base/Dockerfile])
+-	[`20i/haproxy:latest`, `20i/haproxy:3.4.7`]([https://github.com/arruor/docker-library/blob/main/almalinux/haproxy/Dockerfile])
+-	[`20i/httpd:latest`, `20i/httpd:2.4.71`]([https://github.com/arruor/docker-library/blob/main/almalinux/httpd/Dockerfile])
+-	[`20i/mariadb:latest`, `20i/mariadb:13.1.1`]([https://github.com/arruor/docker-library/blob/main/almalinux/mariadb/Dockerfile])
 -	[`20i/pdns:latest`, `20i/pdns:4.9`]([https://github.com/arruor/docker-library/blob/main/almalinux/pdns/Dockerfile])
 -	[`20i/pdns-recursor:latest`, `20i/pdns-recursor:5.2`]([https://github.com/arruor/docker-library/blob/main/almalinux/pdns-recursor/Dockerfile])
 -	[`20i/php-8.0:latest`, `20i/php-8.0:8.0.30`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.0/Dockerfile])
--	[`20i/php-8.3-cli:latest`, `20i/php-8.3-cli:8.3.32`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.3/cli/Dockerfile])
--	[`20i/php-8.3-fpm:latest`, `20i/php-8.3-fpm:8.3.32`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.3/fpm/Dockerfile])
--	[`20i/php-dev:latest`, `20i/php-dev:8.3.32`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/dev/Dockerfile])
+-	[`20i/php-8.3-cli:latest`, `20i/php-8.3-cli:8.3.36`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.3/cli/Dockerfile])
+-	[`20i/php-8.3-fpm:latest`, `20i/php-8.3-fpm:8.3.36`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/8.3/fpm/Dockerfile])
+-	[`20i/php-dev:latest`, `20i/php-dev:8.3.36`]([https://github.com/arruor/docker-library/blob/main/almalinux/php/dev/Dockerfile])
 
 # Building
 
@@ -56,7 +56,7 @@ $ REGISTRY_PREFIXES=docker.io/20i,quay.io/20i,ghcr.io/20i,registry.gitlab.local/
 
 The AlmaLinux builder publishes the upstream version tag, an immutable
 `<version>-r<revision>` tag, and compatible floating release-line tags. For
-example, an HTTPD build publishes `2.4.68`, `2.4.68-r1`, `2.4`, `2`, and
+example, an HTTPD build publishes `2.4.71`, `2.4.71-r1`, `2.4`, `2`, and
 `latest`. Increment `--image-revision` (or `IMAGE_REVISION`) when rebuilding
 the same upstream version for security or base-image updates:
 
