@@ -1,0 +1,9 @@
+services:
+  rpm-repo:
+    build:
+      context: ./rpm-repo
+    ports:
+      - "0.0.0.0:${REPO_PORT:-2080}:8080"
+    volumes:
+      - ./repo:/srv/repo
+    restart: unless-stopped
