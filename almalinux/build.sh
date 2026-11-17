@@ -253,16 +253,16 @@ declare -A IMAGE_REPO=(
 )
 
 declare -A VERSION=(
-    [base]="9.8"
-    [haproxy]="3.4.2"
-    [httpd]="2.4.68"
-    [mariadb]="13.0.1"
+    [base]="9.9"
+    [haproxy]="3.4.27"
+    [httpd]="2.4.71"
+    [mariadb]="13.1.1"
     [pdns]="4.9"
     [pdns-recursor]="5.2"
     [php-8.0]="8.0.30"
-    [php-8.3-cli]="8.3.32"
-    [php-8.3-fpm]="8.3.32"
-    [php-dev]="8.3.32"
+    [php-8.3-cli]="8.3.36"
+    [php-8.3-fpm]="8.3.36"
+    [php-dev]="8.3.36"
 )
 
 # PHP image repositories are deliberately pinned to a PHP minor line by their
@@ -388,6 +388,7 @@ build_image() {
     local args=(
         docker buildx build
         --pull
+        --add-host host.docker.internal=host-gateway
         --build-arg "BASE_IMAGE=$(base_image_for "${key}")"
         --build-arg "BUILD_DATE=${BUILD_DATE}"
         --build-arg "VCS_REF=${VCS_REF}"

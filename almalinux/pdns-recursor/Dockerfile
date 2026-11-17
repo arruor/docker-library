@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=hub.lhr.stackcp.net/20i/alma:9.8
+ARG BASE_IMAGE=hub.lhr.stackcp.net/20i/alma:9.9-r1
 FROM ${BASE_IMAGE}
 
 ARG BUILD_DATE

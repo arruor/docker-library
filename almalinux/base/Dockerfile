@@ -25,13 +25,14 @@ LABEL maintainer="Dimitar Nikov <dimitar@nikov.net>" \
 ENV TZ=Europe/London
 
 COPY 20i-ca.crt /etc/pki/ca-trust/source/anchors/20i-ca.crt
+COPY al9-local-20i-docker.repo /etc/yum.repos.d/al9-local-20i-docker.repo
 
 RUN --mount=type=cache,target=/var/cache/dnf,id=dnf-cache-${TARGETARCH},sharing=locked \
     set -eux; \
-    dnf -y install dnf-plugins-core python3-dnf-plugins-core python3-dbus python3-systemd; \
+    dnf -y --disablerepo=20i-local install dnf-plugins-core python3-dnf-plugins-core python3-dbus python3-systemd; \
     sed -i -e '/enabled/d' -e 's/^\[\(.*\)\]/[\1]\nenabled=0/' /etc/yum.repos.d/*.repo; \
     dnf config-manager --add-repo http://yum.lhr.stackcp.net/yum/al9-local.repo; \
-    dnf config-manager --add-repo http://yum.lhr.stackcp.net/yum/al9-local-20i-docker.repo; \
+    dnf config-manager --set-enabled 20i-local; \
     dnf -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs --allowerasing install \
         ca-certificates bash curl mtr net-tools procps-ng python3-dbus python3-systemd \
         tcptraceroute tzdata vim-minimal cronie rsyslog rsyslog-logrotate; \

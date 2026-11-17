@@ -1,0 +1,14 @@
+[20i-local]
+name=20i
+baseurl=http://host.docker.internal:2080/$releasever/$basearch/
+enabled=1
+gpgcheck=0
+
+[mariadb13]
+name=AlmaLinux $releasever - MariaDB
+baseurl=https://yum.lhr.stackcp.net/pub/mariadb/yum/13.1/almalinux/$releasever/$basearch/
+enabled=0
+gpgcheck=0
+countme=0
+metadata_expire=86400
+enabled_metadata=0
