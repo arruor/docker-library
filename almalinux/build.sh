@@ -262,7 +262,7 @@ declare -A IMAGE_REPO=(
 
 declare -A VERSION=(
     [base]="9.9"
-    [haproxy]="3.4.27"
+    [haproxy]="3.4.7"
     [httpd]="2.4.71"
     [mariadb]="13.1.1"
     [pdns]="4.9"
