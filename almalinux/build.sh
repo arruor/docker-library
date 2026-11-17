@@ -17,6 +17,7 @@ NO_CACHE=0
 PUBLISH_LATEST=1
 REGISTRY_PREFIXES_CSV="${REGISTRY_PREFIXES:-${REGISTRY}}"
 REGISTRY_PREFIXES=()
+REPO_HOST_IP="${REPO_HOST_IP:-}"
 
 usage() {
     cat <<'EOF'
@@ -54,6 +55,9 @@ Known image keys:
   php-8.3-cli
   php-8.3-fpm
   php-dev
+
+Environment:
+  REPO_HOST_IP              Override host.docker.internal with a reachable IP
 EOF
 }
 
@@ -144,6 +148,10 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --image-revision)
+            if [[ $# -lt 2 || -z "${2:-}" || "${2:-}" == --* ]]; then
+                echo "--image-revision requires a number, for example: --image-revision 1" >&2
+                exit 1
+            fi
             IMAGE_REVISION="${2:-}"
             shift 2
             ;;
@@ -388,7 +396,6 @@ build_image() {
     local args=(
         docker buildx build
         --pull
-        --add-host host.docker.internal=host-gateway
         --build-arg "BASE_IMAGE=$(base_image_for "${key}")"
         --build-arg "BUILD_DATE=${BUILD_DATE}"
         --build-arg "VCS_REF=${VCS_REF}"
@@ -401,6 +408,10 @@ build_image() {
     local image_ref_value
     local tag
     local -a floating_tags=()
+
+    if [[ -n "${REPO_HOST_IP}" ]]; then
+        args+=(--add-host "host.docker.internal=${REPO_HOST_IP}")
+    fi
 
     read -r -a floating_tags <<< "$(floating_tags_for "${key}")"
 
@@ -471,6 +482,20 @@ main() {
     export DOCKER_BUILDKIT=1
 
     ensure_builder
+
+    # Desktop supplies host.docker.internal through DNS. Native Linux needs
+    # a literal IP: the docker-container driver cannot expand host-gateway.
+    if [[ -z "${REPO_HOST_IP}" ]]; then
+        local docker_os
+        docker_os="$(docker info --format '{{.OperatingSystem}}')"
+        if [[ "${docker_os}" != *"Docker Desktop"* && "$(uname -s)" == Linux ]]; then
+            REPO_HOST_IP="$(docker network inspect bridge --format '{{(index .IPAM.Config 0).Gateway}}')"
+            if [[ -z "${REPO_HOST_IP}" || "${REPO_HOST_IP}" == '<no value>' ]]; then
+                echo "Cannot determine the repository host IP; set REPO_HOST_IP to a reachable IP." >&2
+                exit 1
+            fi
+        fi
+    fi
 
     for image in "${IMAGES[@]}"; do
         if should_build "${image}"; then
